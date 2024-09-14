@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DHGSystems.FileSortingWithL
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{2AACF4BB-C9C7-49AD-898B-C2C5401BB44C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DHGSystems.FileSortingWithLimitedMemory", "DHGSystems.FileSortingWithLimitedMemory\DHGSystems.FileSortingWithLimitedMemory.csproj", "{5464B8CE-5A9C-45E4-9E13-4EF39043AA30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DHGSystems.FileSortingWithLimitedMemory.UnitTests", "DHGSystems.FileSortingWithLimitedMemory\DHGSystems.FileSortingWithLimitedMemory.UnitTests.csproj", "{5464B8CE-5A9C-45E4-9E13-4EF39043AA30}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DHGSystems.FileSortingWithLimitedMemory.Lib", "DHGSystems.FileSortingWithLimitedMemory.Lib\DHGSystems.FileSortingWithLimitedMemory.Lib.csproj", "{42F6565F-C506-454C-875D-2A951190C20B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DHGSystems.FileSortingWithLimitedMemory.Lib", "DHGSystems.FileSortingWithLimitedMemory.Lib\DHGSystems.FileSortingWithLimitedMemory.Lib.csproj", "{42F6565F-C506-454C-875D-2A951190C20B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

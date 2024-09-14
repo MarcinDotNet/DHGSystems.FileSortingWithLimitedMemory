@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Executors\" />
+    <Compile Remove="Executors\**" />
+    <EmbeddedResource Remove="Executors\**" />
+    <None Remove="Executors\**" />
   </ItemGroup>
 
 </Project>
