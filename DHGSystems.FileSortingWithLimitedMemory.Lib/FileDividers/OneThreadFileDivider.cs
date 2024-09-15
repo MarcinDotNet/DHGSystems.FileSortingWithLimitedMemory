@@ -12,12 +12,10 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
         private readonly string _tempPathForSortedFiles;
         private readonly string _generatedFilePrefix;
         private readonly IDhgSystemsLogger _logger;
-        private readonly long _maxLinesPerFile;
 
-        public OneThreadFileDivider(string tempPath, long maxLinesPerFile, string generatedFilePrefix, IDhgSystemsLogger logger)
+        public OneThreadFileDivider(string tempPath,string generatedFilePrefix, IDhgSystemsLogger logger)
         {
             this._tempPathForSortedFiles = tempPath;
-            this._maxLinesPerFile = maxLinesPerFile;
             this._generatedFilePrefix = generatedFilePrefix;
             this._logger = logger;
         }
@@ -34,9 +32,9 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 int position;
                 int lineCount = 0;
                 int fileNumber = 1;
-                string[] allStrings = new string[_maxLinesPerFile];
+                string[] allStrings = new string[maxLinesBeforeSort];
                 string lineText = String.Empty;
-                BigDataEntryRef[] loadedValues = new BigDataEntryRef[_maxLinesPerFile];
+                BigDataEntryRef[] loadedValues = new BigDataEntryRef[maxLinesBeforeSort];
 
                 while ((lineText = sr.ReadLine()) != null)
                 {
@@ -51,21 +49,34 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                         proc.Refresh();
                         var newfileName = GetFileName();
                         _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +
-                                                             $" Memory usage {proc.PrivateMemorySize64:N1} batch of {_maxLinesPerFile} read for file nr. {fileNumber}. File will be saved as {newfileName}.");
+                                                             $" Memory usage {proc.PrivateMemorySize64:N1} batch of {maxLinesBeforeSort} read for file nr. {fileNumber}. File will be saved as {newfileName}.");
 
                         using (StreamWriter outputFile = new StreamWriter(newfileName))
                         {
+                            outputFile.AutoFlush = false;
                             var sorted = loadedValues.AsParallel().OrderBy(x => allStrings[x.Name]).ThenBy(y => y.Number).ToArray();
                             _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +
-                                                                 $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {_maxLinesPerFile} sorted for file nr. {fileNumber} . File name {newfileName}.");
+                                 
+                                                                 $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {maxLinesBeforeSort} sorted for file nr. {fileNumber} . File name {newfileName}.");
+                            int sortedLength = sorted.Length;
+                            int lastLine = sorted.Length - 1;
+
                             for (int i = 0; i < sorted.Length; i++)
                             {
                                 outputFile.Write(sorted[i].Number);
                                 outputFile.Write(".");
-                                outputFile.WriteLine(allStrings[sorted[i].Name]);
+                                if (i == lastLine)
+                                {
+                                    outputFile.Write(allStrings[sorted[i].Name]);
+                                }
+                                else
+                                {
+                                    outputFile.WriteLine(allStrings[sorted[i].Name]);
+                                }
 
                             }
                             generatedFiles.Add(newfileName);
+                            outputFile.Flush();
                         }
 
                         proc.Refresh();
@@ -85,16 +96,28 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                                                          $" Memory usage {proc.PrivateMemorySize64:N1} Processing rest of rows {lineCount} read for file file nr. {fileNumber}. File will be saved as {newfileName}.");
                     using (StreamWriter outputFile = new StreamWriter(newfileName))
                     {
+                        outputFile.AutoFlush = false;
                         var sorted = loadedValues[0..lineCount].AsParallel().OrderBy(x => allStrings[x.Name]).ThenBy(y => y.Number).ToArray();
                         _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +
-                                                             $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {_maxLinesPerFile} sorted for file nr. {fileNumber} . File name {newfileName}.");
-                        for (int i = 0; i < sorted.Length; i++)
+                                                             $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {lineCount} sorted for file nr. {fileNumber} . File name {newfileName}.");
+                        int sortedLength = sorted.Length;
+                        int lastLine = sorted.Length-1;
+                        for (int i = 0; i < sortedLength; i++)
                         {
                             outputFile.Write(sorted[i].Number);
                             outputFile.Write(".");
-                            outputFile.WriteLine(allStrings[sorted[i].Name]);
+                            if (i == lastLine)
+                            {
+                                outputFile.Write(allStrings[sorted[i].Name]);
+                            }
+                            else
+                            {
+                                outputFile.WriteLine(allStrings[sorted[i].Name]);
+                            }
                         }
+                        outputFile.Flush();
                     }
+
                     generatedFiles.Add(newfileName);
                     proc.Refresh();
                     _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +

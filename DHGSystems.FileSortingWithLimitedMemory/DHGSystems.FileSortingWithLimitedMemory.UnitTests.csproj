@@ -30,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="TestFilesSorted\emailTestSorted.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
