@@ -24,11 +24,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
 
             Directory.CreateDirectory(_tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath,  "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(oneRowTestFile, 5).ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(oneRowTestResultFile);
-            Assert.AreEqual(resultFileContent,fileContent);
+            Assert.AreEqual(resultFileContent, fileContent);
         }
 
         [TestMethod]
@@ -41,7 +41,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
 
             Directory.CreateDirectory(_tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath,  "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40).ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(emailTestResultFile);

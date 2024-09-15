@@ -13,7 +13,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
         private readonly string _generatedFilePrefix;
         private readonly IDhgSystemsLogger _logger;
 
-        public OneThreadFileDivider(string tempPath,string generatedFilePrefix, IDhgSystemsLogger logger)
+        public OneThreadFileDivider(string tempPath, string generatedFilePrefix, IDhgSystemsLogger logger)
         {
             this._tempPathForSortedFiles = tempPath;
             this._generatedFilePrefix = generatedFilePrefix;
@@ -56,7 +56,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                             outputFile.AutoFlush = false;
                             var sorted = loadedValues.AsParallel().OrderBy(x => allStrings[x.Name]).ThenBy(y => y.Number).ToArray();
                             _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +
-                                 
+
                                                                  $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {maxLinesBeforeSort} sorted for file nr. {fileNumber} . File name {newfileName}.");
                             int sortedLength = sorted.Length;
                             int lastLine = sorted.Length - 1;
@@ -101,7 +101,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                         _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds.ToString()}," +
                                                              $" Memory usage {proc.PrivateMemorySize64:N1}  batch of {lineCount} sorted for file nr. {fileNumber} . File name {newfileName}.");
                         int sortedLength = sorted.Length;
-                        int lastLine = sorted.Length-1;
+                        int lastLine = sorted.Length - 1;
                         for (int i = 0; i < sortedLength; i++)
                         {
                             outputFile.Write(sorted[i].Number);

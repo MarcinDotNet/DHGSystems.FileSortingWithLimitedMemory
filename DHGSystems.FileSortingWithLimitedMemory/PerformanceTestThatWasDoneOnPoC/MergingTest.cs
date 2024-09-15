@@ -45,18 +45,18 @@
 //                list.RemoveAt(i);
 //            }
 //        }
-        
+
 //        using (StreamWriter outputFile = new StreamWriter(Path.Combine(mergePath,
 //                   $"bigfile_sorted_ALL_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}.txt")))
 //        {
 //            while (list.Any())
 //            {  
 //                var item =  list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
-               
+
 //               outputFile.Write(item.LastEntry.Number);
 //               outputFile.Write(".");
 //               outputFile.WriteLine(item.LastEntry.Name);
-               
+
 //               var elementRead = item.LoadNextEntry();
 //               if (!elementRead)
 //               {

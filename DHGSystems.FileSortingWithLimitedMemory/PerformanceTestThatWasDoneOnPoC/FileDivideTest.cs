@@ -28,7 +28,7 @@
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        using (StreamReader sr = File.OpenText(testFileName))
 //        {
 //            using (StreamWriter outputFile = new StreamWriter(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt")))
@@ -45,29 +45,29 @@
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
-    
+
 //    [TestMethod]
 //    public void ReadFullFileSaveFullFileTest()
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        File.WriteAllLines(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllLines(testFileName));
-        
-    
+
+
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
-    
+
 //    [TestMethod]
 //    public void ReadFullFileSaveFullFileTestBytes()
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        File.WriteAllBytes(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllBytes(testFileName));
-        
-    
+
+
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
@@ -75,13 +75,13 @@
 
 
 
-   
+
 
 //    public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
 //    {
-       
+
 //        public long Number { get; set; }
-        
+
 //        public string Name { get; set; }
 
 //        public bool Equals(BigDataEntry other)
