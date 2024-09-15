@@ -12,4 +12,8 @@
     <None Remove="Executors\**" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DHGSystems.FileSortingWithLimitedMemory.Common\DHGSystems.FileSortingWithLimitedMemory.Common.csproj" />
+  </ItemGroup>
+
 </Project>

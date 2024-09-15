@@ -24,4 +24,24 @@
     <Folder Include="PerformanceTestThatWasDone\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\DHGSystems.FileSortingWithLimitedMemory.Common\DHGSystems.FileSortingWithLimitedMemory.Common.csproj" />
+    <ProjectReference Include="..\DHGSystems.FileSortingWithLimitedMemory.Lib\DHGSystems.FileSortingWithLimitedMemory.Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestFilesSorted\emailTestSorted.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFilesSorted\oneLineFileSorted.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\emailTest.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestFiles\oneLineFile.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
