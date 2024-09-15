@@ -4,8 +4,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
 {
     public class SimpleFileMergerWithSorting : IFileMergerWithSorting
     {
-
-        private string _mergePath;
         public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
         {
             List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
@@ -14,27 +12,41 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 list.Add(new ProcessingStreamToMerge(i, filesToMerge[i]));
             }
 
+            bool elementRead;
+
+            //Load first element from each file
             for (int i = list.Count - 1; i > -1; i--)
             {
-                var elementRead = list[i].LoadNextEntry();
+                elementRead = list[i].LoadNextEntry();
                 if (!elementRead)
                 {
                     list.RemoveAt(i);
                 }
             }
 
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(_mergePath,
-                       $"bigfile_sorted_ALL_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}.txt")))
+            using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {
+                ProcessingStreamToMerge item;
+                bool firstLine = true; 
                 while (list.Any())
                 {
-                    var item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
+                    // to not set new line at the beginning of the file and to not set new line at the end of the file
+                    if (!firstLine)
+                    {
+                        outputFile.WriteLine();
+                    }
+                    else
+                    {
+                        firstLine = false;
+                    }
+
+                    item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
 
                     outputFile.Write(item.LastEntry.Number);
                     outputFile.Write(".");
-                    outputFile.WriteLine(item.LastEntry.Name);
+                    outputFile.Write(item.LastEntry.Name);
 
-                    var elementRead = item.LoadNextEntry();
+                    elementRead = item.LoadNextEntry();
                     if (!elementRead)
                     {
                         list.RemoveAll(x => x.Id == item.Id);

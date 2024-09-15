@@ -7,7 +7,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
     [TestClass]
     public class OneThreadFileDividerTest
     {
-        private readonly string _tempPath = "OneThreadFileDividerTestFolder";
+        private readonly string tempPath = "OneThreadFileDividerTestFolder";
         private readonly string testFolderPath = @"TestFiles\\";
         private readonly string oneRowTestFile = @"TestFiles\\oneLineFile.txt";
         private readonly string emailTestFile = @"TestFiles\\EmailTest.txt";
@@ -17,14 +17,14 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         [TestMethod]
         public void ProcesOneRowFile_Should_BePositive()
         {
-            if (Directory.Exists(_tempPath))
+            if (Directory.Exists(tempPath))
             {
-                Directory.Delete(_tempPath, true);
+                Directory.Delete(tempPath, true);
             }
 
-            Directory.CreateDirectory(_tempPath);
+            Directory.CreateDirectory(tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(oneRowTestFile, 5).ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(oneRowTestResultFile);
@@ -34,14 +34,14 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         [TestMethod]
         public void ProcesMultiLineRowFile_Should_BePositive()
         {
-            if (Directory.Exists(_tempPath))
+            if (Directory.Exists(tempPath))
             {
-                Directory.Delete(_tempPath, true);
+                Directory.Delete(tempPath, true);
             }
 
-            Directory.CreateDirectory(_tempPath);
+            Directory.CreateDirectory(tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40).ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(emailTestResultFile);
@@ -51,14 +51,14 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         [TestMethod]
         public void ProcesMultiLineRowFile_OnLineCount_Equal_MaxBatch_Should_BePositive()
         {
-            if (Directory.Exists(_tempPath))
+            if (Directory.Exists(tempPath))
             {
-                Directory.Delete(_tempPath, true);
+                Directory.Delete(tempPath, true);
             }
 
-            Directory.CreateDirectory(_tempPath);
+            Directory.CreateDirectory(tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40).ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(emailTestResultFile);
@@ -79,14 +79,14 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         public void ProcesMultiLineFile_WithDifferent_DivideLineCount_Should_BePositive(long maxLineCount,
             int expectedFileCount)
         {
-            if (Directory.Exists(_tempPath))
+            if (Directory.Exists(tempPath))
             {
-                Directory.Delete(_tempPath, true);
+                Directory.Delete(tempPath, true);
             }
 
-            Directory.CreateDirectory(_tempPath);
+            Directory.CreateDirectory(tempPath);
             OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(_tempPath, "sorted_file_", new DhgSystemsNLogLogger());
+                new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
             var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, maxLineCount).ToList();
             Assert.AreEqual(expectedFileCount, generatedFiles.Count);
         }

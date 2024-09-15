@@ -1,5 +1,6 @@
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
 using System.Diagnostics;
+using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 
 
 namespace DHGSystems.FileSortingWithLimitedMemory
@@ -31,7 +32,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             randomStringFileGenerator.GenerateTestFile(lineCount, testFileName);
 
             Process proc = Process.GetCurrentProcess();
-            Console.WriteLine($"Memory {(proc.PrivateMemorySize64/1024):N1} KB");
+            Console.WriteLine($"Memory {(ProcessHelper.GetUsedMemoryInMb()):N1} MB");
             Console.WriteLine($"Time {watch.ElapsedMilliseconds:N1}");
             decimal fileSizesInMB = new FileInfo(testFileName).Length/1024;
             Console.WriteLine($"File size {fileSizesInMB.ToString($"N1")} KB");
