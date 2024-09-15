@@ -1,4 +1,6 @@
-﻿namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
+﻿using DHGSystems.FileSortingWithLimitedMemory.Common;
+
+namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
 {
     public class RandomStringFileGenerator : ITestDataFileGenerator
     {
@@ -63,8 +65,8 @@
                 if (_addStaticTestData)
                 {
                     rowsToGen = rowsToGen - 4;
-                    outputFile.WriteLine("500. And i should be second ");
-                    outputFile.WriteLine("500. Z I should be last ");
+                    outputFile.WriteLine(Constants.SecondLineInTestFile);
+                    outputFile.WriteLine(Constants.LastLineInTestFile);
                 }
 
                 for (var i = 0; i < rowsToGen; i++)
@@ -74,8 +76,9 @@
                 outputFile.Write(longTables[Random.Shared.Next(_diffValuesCount)] + ". " + stringValues[Random.Shared.Next(_diffValuesCount)]);
 
                 if (!_addStaticTestData) return;
-                outputFile.WriteLine("1. And i should be first ");
-                outputFile.WriteLine("1. Z I should be before last ");
+                outputFile.WriteLine();
+                outputFile.WriteLine(Constants.FirstLineInTestFile);
+                outputFile.Write(Constants.BeforeLastLineInTestFile);
             }
         }
     }

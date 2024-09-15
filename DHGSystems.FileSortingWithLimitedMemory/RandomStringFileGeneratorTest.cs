@@ -1,5 +1,6 @@
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
 using System.Diagnostics;
+using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 
 
@@ -46,8 +47,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory
 
                 if (useStaticData)
                 {
-                    Assert.IsTrue(generatedFileContent.Any(x => x.Contains("500. And i should be second")));
-                    Assert.IsTrue(generatedFileContent.Any(x => x.Contains("500. Z I should be last")));
+                    Assert.IsTrue(generatedFileContent.Any(x => x.Contains(Constants.LastLineInTestFile)));
+                    Assert.IsTrue(generatedFileContent.Any(x => x.Contains(Constants.FirstLineInTestFile)));
                 }
             }
         }

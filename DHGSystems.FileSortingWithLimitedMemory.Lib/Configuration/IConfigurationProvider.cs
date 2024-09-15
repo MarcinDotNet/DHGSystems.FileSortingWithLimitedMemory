@@ -2,6 +2,6 @@
 {
     public interface IConfigurationProvider
     {
-        FilesSortedAppConfiguration GetConfiguration();
+        FileSortingAppConfiguration GetConfiguration();
     }
 }

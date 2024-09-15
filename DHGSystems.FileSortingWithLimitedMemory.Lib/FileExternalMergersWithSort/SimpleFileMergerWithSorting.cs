@@ -39,7 +39,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     {
                         firstLine = false;
                     }
-
+                    
                     item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
 
                     outputFile.Write(item.LastEntry.Number);

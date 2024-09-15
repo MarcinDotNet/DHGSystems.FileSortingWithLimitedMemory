@@ -27,6 +27,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             var watch = Stopwatch.StartNew();
             _logger.Info("OneThreadFileDivider", $"Starting dividing file {fileToDived} ");
 
+            decimal totalRows = 0;
             using (StreamReader sr = File.OpenText(fileToDived))
             {
                 int position;
@@ -81,6 +82,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                                                              $" Memory usage {ProcessHelper.GetUsedMemoryInMb()} MB File nr. {fileNumber} saved. File name {newfileName}.");
                         GC.Collect();
                         fileNumber++;
+                        totalRows += lineCount;
                         lineCount = 0;
                     }
                 }
@@ -119,9 +121,10 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                     _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds:N1} ms," +
                                                          $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB File nr. {fileNumber} saved. File name {newfileName}.");
                 }
+                totalRows += lineCount;
             }
             _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived} completed. Total time {watch.ElapsedMilliseconds:N1} ms," +
-                                                 $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+                                                 $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB. Total lines in file {totalRows} ");
             return generatedFiles;
         }
 

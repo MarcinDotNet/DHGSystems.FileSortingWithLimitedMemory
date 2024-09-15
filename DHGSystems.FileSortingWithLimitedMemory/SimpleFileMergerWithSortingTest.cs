@@ -1,7 +1,3 @@
-using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
-using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
-using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
-using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 
 
@@ -11,9 +7,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
     public class SimpleFileMergerWithSortingTest
     {
         private readonly string tempPath = "MergedFilesOutput";
-        private readonly string testFolderPath = @"TestFiles\\";
         private readonly string oneRowTestFile = @"TestFiles\\oneLineFile.txt";
-        private readonly string emailTestFile = @"TestFiles\\EmailTest.txt";
         private readonly string oneRowTestResultFile = @"TestFilesSorted\\oneLineFileSorted.txt";
         private readonly string emailTestResultFile = @"TestFilesSorted\\emailTestSorted.txt";
         private readonly string outputFilePath = @"MergedFilesOutput\\sortedFile.txt";

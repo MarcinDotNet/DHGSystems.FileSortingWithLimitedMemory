@@ -14,5 +14,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Common.Helpers
             var proc = Process.GetCurrentProcess();
             return proc.PrivateMemorySize64 / 1024 / 1024;
         }
+
     }
 }
