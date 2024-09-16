@@ -1,7 +1,9 @@
-﻿namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
+﻿using System.Collections.Concurrent;
+
+namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
 {
     public interface IFileDividerWithSort
     {
-        IEnumerable<string> DivideFileWithSort(string fileToDived, long maxLinesBeforeSort);
+       void DivideFileWithSort(string fileToDived, long maxLinesBeforeSort, ConcurrentQueue<string> filesProcessed);
     }
 }

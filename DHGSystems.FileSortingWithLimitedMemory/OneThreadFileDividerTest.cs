@@ -1,5 +1,6 @@
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
+using System.Collections.Concurrent;
 
 
 namespace DHGSystems.FileSortingWithLimitedMemory
@@ -23,9 +24,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             }
 
             Directory.CreateDirectory(tempPath);
+            ConcurrentQueue<string> filesProcessed = new ConcurrentQueue<string>();
             OneThreadFileDivider oneThreadFileDivider =
                 new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
-            var generatedFiles = oneThreadFileDivider.DivideFileWithSort(oneRowTestFile, 5).ToList();
+            oneThreadFileDivider.DivideFileWithSort(oneRowTestFile, 5, filesProcessed);
+            var generatedFiles = filesProcessed.ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(oneRowTestResultFile);
             Assert.AreEqual(resultFileContent, fileContent);
@@ -40,9 +43,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             }
 
             Directory.CreateDirectory(tempPath);
+            ConcurrentQueue<string> filesProcessed = new ConcurrentQueue<string>();
             OneThreadFileDivider oneThreadFileDivider =
                 new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
-            var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40).ToList();
+            oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40, filesProcessed);
+            var generatedFiles = filesProcessed.ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(emailTestResultFile);
             Assert.AreEqual(resultFileContent, fileContent);
@@ -57,9 +62,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             }
 
             Directory.CreateDirectory(tempPath);
+            ConcurrentQueue<string> filesProcessed = new ConcurrentQueue<string>();
             OneThreadFileDivider oneThreadFileDivider =
                 new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
-            var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40).ToList();
+            oneThreadFileDivider.DivideFileWithSort(emailTestFile, 40, filesProcessed);
+            var generatedFiles = filesProcessed.ToList();
             var fileContent = File.ReadAllText(generatedFiles.First());
             var resultFileContent = File.ReadAllText(emailTestResultFile);
             Assert.AreEqual(resultFileContent, fileContent);
@@ -85,9 +92,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             }
 
             Directory.CreateDirectory(tempPath);
+            ConcurrentQueue<string> filesProcessed = new ConcurrentQueue<string>();
             OneThreadFileDivider oneThreadFileDivider =
                 new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
-            var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, maxLineCount).ToList();
+            oneThreadFileDivider.DivideFileWithSort(emailTestFile, maxLineCount, filesProcessed);
+            var generatedFiles = filesProcessed.ToList();
             Assert.AreEqual(expectedFileCount, generatedFiles.Count);
         }
     }

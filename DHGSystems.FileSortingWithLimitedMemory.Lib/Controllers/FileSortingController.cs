@@ -1,10 +1,12 @@
 ﻿
+using System.Collections.Concurrent;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.Configuration;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
+using System.Threading.Tasks;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
 {
@@ -15,6 +17,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
         private const string ClassName = "FCSimple";
         private readonly IFileDividerWithSort _fileSorterDividerWithSort;
         private readonly IFileMergerWithSorting _fileMergerWithSorting;
+        public const int StartMergeFileCount =5;
         
         public FileSortingController(FileSortingAppConfiguration configuration,
             IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort, IFileMergerWithSorting fileMergerWithSorting)
@@ -43,19 +46,111 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
 
             var totalWatch = Stopwatch.StartNew();
             _logger.Info(ClassName, $"Start dividing file into sorted files. Temp folder: {_configuration.TempFolderPath}. Max lines in one file: {_configuration.MaxLinesBeforeSort}");
-             var files = this._fileSorterDividerWithSort.DivideFileWithSort(inputFileFullFileName, _configuration.MaxLinesBeforeSort).ToArray();
+            List<string> filesToProcess = new List<string>();
 
-            var mergeWatch = Stopwatch.StartNew();
+             ConcurrentQueue<string> filesProcessedQueue = new ConcurrentQueue<string>();
+             bool firstFile = true;
+             var sortingTask = Task.Run(()=>this._fileSorterDividerWithSort.DivideFileWithSort(inputFileFullFileName,
+                 _configuration.MaxLinesBeforeSort, filesProcessedQueue));
+             Stopwatch mergeWatch = null;
+            int mergeFileTaskId = 0;
+             int fileCount = 0;
+             List<Task> mergeTasks = new List<Task>();
+             List<(string, string[])> listOfMergeTasksParameters = new List<(string, string[])>();
+
+            while (!sortingTask.IsCompleted)
+             {
+                 if (filesProcessedQueue.TryDequeue(out string fileName))
+                 {
+                        filesToProcess.Add(fileName);
+                        if (firstFile)
+                        {
+                            _logger.Info(ClassName, $"First file created: {fileName}");
+                            firstFile = false;
+                            fileSizesInMB = new FileInfo(filesToProcess[0]).Length / 1024 / 1024;
+    
+                            _logger.Info(ClassName, $" First file size {fileSizesInMB} MB.");
+                        }
+
+                        fileCount++;
+                        if (filesToProcess.Count == 5)
+                        { 
+                            int currentMergeFileTaskId = mergeFileTaskId;
+                            listOfMergeTasksParameters.Add((GetMergeFileName(currentMergeFileTaskId), filesToProcess.ToArray()));
+                            _logger.Info(ClassName, $"Start merging {5} files into {listOfMergeTasksParameters[mergeFileTaskId].Item1} . Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+                          mergeTasks.Add(Task.Run(() => this._fileMergerWithSorting.MergeFilesWithSort(listOfMergeTasksParameters[currentMergeFileTaskId].Item2, listOfMergeTasksParameters[currentMergeFileTaskId].Item1)));
+                          mergeFileTaskId++;
+                          filesToProcess.Clear();
+                          mergeWatch = Stopwatch.StartNew();
+                        }
+
+                 }
+                 Thread.Sleep(100);
+             }
+
             _logger.Info(ClassName, $"Dividing file into sorted files finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
-             fileSizesInMB = new FileInfo(files[0]).Length / 1024 / 1024;
 
-            _logger.Info(ClassName, $"Total files created: {files.Length}.  First file size {fileSizesInMB} MB.");
-         
-            _fileMergerWithSorting.MergeFilesWithSort(files,outputFileFullFileName);
+            while (filesProcessedQueue.TryDequeue(out string fileName))
+             {
+                filesToProcess.Add(fileName);
+                if (firstFile)
+                {
+                    _logger.Info(ClassName, $"First file created: {fileName}");
+                    firstFile = false;
+                    fileSizesInMB = new FileInfo(filesToProcess[0]).Length / 1024 / 1024;
+
+                    _logger.Info(ClassName, $" First file size {fileSizesInMB} MB.");
+                }
+
+                fileCount++;
+                if (filesToProcess.Count == 5)
+                {
+                    int currentMergeFileTaskId = mergeFileTaskId;
+                    listOfMergeTasksParameters.Add((GetMergeFileName(currentMergeFileTaskId), filesToProcess.ToArray()));
+                    mergeTasks.Add(Task.Run(() => this._fileMergerWithSorting.MergeFilesWithSort(listOfMergeTasksParameters[currentMergeFileTaskId].Item2, listOfMergeTasksParameters[currentMergeFileTaskId].Item1)));
+                    mergeFileTaskId++;
+                    filesToProcess.Clear();
+                    if (mergeWatch == null)
+                    {
+                        mergeWatch = Stopwatch.StartNew();
+                    }
+                }
+            }
+
+            _logger.Info(ClassName, $"Dequeing finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+
+
+            foreach (var task in mergeTasks)
+            {
+                if (task != null)
+                {
+                    task.Wait();
+                }
+            }
+
+            _logger.Info(ClassName, $"Initial files merging finished. Time {mergeWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+
+            if (mergeWatch == null)
+            {
+                mergeWatch = Stopwatch.StartNew();
+            }
+            var restOfFiles = filesToProcess.ToList();
+            restOfFiles.AddRange(listOfMergeTasksParameters.Select(x => x.Item1));
+
+            _logger.Info(ClassName, $"Start final merging files into {outputFileFullFileName} . Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB. Files to process: {restOfFiles.Count}");
+
+             this._fileMergerWithSorting.MergeFilesWithSort(restOfFiles.ToArray(), outputFileFullFileName);
 
             _logger.Info(ClassName, $"Merging files finished. Time {mergeWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
 
             _logger.Info(ClassName, $"Sorting file {inputFileFullFileName} finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+        }
+
+        private string GetMergeFileName(int fileNumber)
+        {
+            string newfileName = Path.Combine(_configuration.TempFolderPath,
+                $"{_configuration.TempFolderPath}_merge_file_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_{fileNumber:D5}.txt");
+            return newfileName;
         }
     }
 }

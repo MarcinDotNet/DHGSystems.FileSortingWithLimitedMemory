@@ -1,6 +1,7 @@
 ﻿using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
@@ -21,7 +22,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             this._logger = logger;
         }
 
-        public IEnumerable<string> DivideFileWithSort(string fileToDived, long maxLinesBeforeSort)
+        public void DivideFileWithSort(string fileToDived, long maxLinesBeforeSort, ConcurrentQueue<string> filesProcessed)
         {
             List<string> generatedFiles = new List<string>();
             var watch = Stopwatch.StartNew();
@@ -125,7 +126,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             }
             _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived} completed. Total time {watch.ElapsedMilliseconds:N1} ms," +
                                                  $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB. Total lines in file {totalRows} ");
-            return generatedFiles;
+            generatedFiles.ForEach(x => filesProcessed.Enqueue(x));
         }
 
         private string GetFileName()

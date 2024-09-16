@@ -24,7 +24,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             this._logger = logger;
         }
 
-        public IEnumerable<string> DivideFileWithSort(string fileToDived, long maxLinesBeforeSort)
+        public void DivideFileWithSort(string fileToDived, long maxLinesBeforeSort, ConcurrentQueue<string> filesProcessed)
         {
             List<string> generatedFiles = new List<string>();
             var watch = Stopwatch.StartNew();
@@ -80,6 +80,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                         currentStringArray = allStrings[taskNumber];
                         currentLoadedValues = loadedValues[taskNumber];
                         GC.Collect();
+                        var completedFile = string.Empty;
+                        while (generatedFilesQueue.TryDequeue(out completedFile))
+                        {
+                            filesProcessed.Enqueue(completedFile);
+                        }
                     }
                 }
 
@@ -130,8 +135,12 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                     task.Wait();
                 }
             }
-
-            return generatedFilesQueue.ToArray();
+             
+            var responseFile = string.Empty;
+            while (generatedFilesQueue.TryDequeue(out responseFile))
+            {
+                filesProcessed.Enqueue(responseFile);
+            }
         }
 
         private void ProcessFile(int taskId,string fileToDived, long maxLinesBeforeSort, Stopwatch watch, int fileNumber,

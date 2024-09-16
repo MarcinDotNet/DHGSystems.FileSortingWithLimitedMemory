@@ -84,7 +84,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         }
 
         [TestMethod]
-        public void Process_1GB_Multi_Thread_file_should_Be_positive()
+        public async Task Process_1GB_Multi_Thread_file_should_Be_positive()
         {
             if (Directory.Exists(tempPath))
             {
