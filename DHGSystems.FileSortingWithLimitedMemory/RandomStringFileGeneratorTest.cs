@@ -1,9 +1,9 @@
+using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
-using System.Diagnostics;
 
-namespace DHGSystems.FileSortingWithLimitedMemory
+namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
 {
     [TestClass]
     public class RandomStringFileGeneratorTest

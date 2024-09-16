@@ -1,6 +1,6 @@
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 
-namespace DHGSystems.FileSortingWithLimitedMemory
+namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
 {
     [TestClass]
     public class FileMergerWithSortingWithAsyncWriteTest

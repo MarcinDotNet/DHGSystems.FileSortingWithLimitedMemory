@@ -26,7 +26,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
 
         public void DivideFileWithSort(string fileToDived, long maxLinesBeforeSort, ConcurrentQueue<string> filesProcessed)
         {
-            List<string> generatedFiles = new List<string>();
             var watch = Stopwatch.StartNew();
             _logger.Info(ClassName, $"Starting dividing file {fileToDived} ");
 
@@ -38,26 +37,30 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 int position;
                 int lineCount = 0;
                 int fileNumber = 1;
-                List<string[]> allStrings = new List<string[]> { };
-                List<BigDataEntryRef[]> loadedValues = new List<BigDataEntryRef[]> { };
+                string lineText = String.Empty;
+                int taskNumber = 0;
+                List<string[]> allStrings = new List<string[]>();
+                List<BigDataEntryRef[]> loadedValues = new List<BigDataEntryRef[]>();
+                
+                //initialize memory
                 for (int i = 0; i < MaxNumberOfSortWorkers; i++)
                 {
                     allStrings.Add(new string[maxLinesBeforeSort]);
                     loadedValues.Add(new BigDataEntryRef[maxLinesBeforeSort]);
                 }
-                string lineText = String.Empty;
-                int taskNumber = 0;
                 var currentStringArray = allStrings[taskNumber];
                 var currentLoadedValues = loadedValues[taskNumber];
+
                 List<(int, int)> listOfTasksParameters = new List<(int, int)>();
                 while ((lineText = sr.ReadLine()) != null)
                 {
-                    position = lineText.IndexOf(".");
+                    position = lineText.IndexOf(".", StringComparison.Ordinal);
                     currentStringArray[lineCount] = lineText.Substring(position + 1);
                     currentLoadedValues[lineCount].Number = long.Parse(lineText.Substring(0, position));
                     currentLoadedValues[lineCount].Name = lineCount;
                     lineCount++;
 
+                    // do job for one set
                     if (lineCount == maxLinesBeforeSort)
                     {
                         totalRows += lineCount;
@@ -87,7 +90,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                         }
                     }
                 }
-
+                // do job for last step
                 if (lineCount > 0)
                 {
                     var newfileName = GetFileName(fileNumber);
@@ -127,6 +130,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             _logger.Info(ClassName, $"Dividing file {fileToDived} completed. Total time {watch.ElapsedMilliseconds:N1} ms," +
                                     $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB. Total lines in file {totalRows} ");
 
+            // wait for all task to complete
             foreach (var task in tasks)
             {
                 if (task != null)
@@ -135,6 +139,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 }
             }
 
+            // read rest of files
             var responseFile = string.Empty;
             while (generatedFilesQueue.TryDequeue(out responseFile))
             {
@@ -155,7 +160,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 var sorted = loadedValues.AsParallel().OrderBy(x => allStrings[x.Name]).ThenBy(y => y.Number).ToArray();
                 _logger.Info(ClassName, $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds:N1} ms," +
                                         $" Memory usage {ProcessHelper.GetUsedMemoryInMb()} MB  batch of {maxLinesBeforeSort} sorted for file nr. {fileNumber}.Task {taskId}. File name {newfileName}.");
-                int sortedLength = sorted.Length;
                 int lastLine = sorted.Length - 1;
 
                 for (int i = 0; i < sorted.Length; i++)

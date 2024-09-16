@@ -30,7 +30,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 ProcessingStreamToMerge item;
                 bool firstLine = true;
                 int flushCount = 0;
-                Task writerTask = null;
+                Task writerTask = null!;
                 StringBuilder sb = new StringBuilder();
                 while (list.Any())
                 {

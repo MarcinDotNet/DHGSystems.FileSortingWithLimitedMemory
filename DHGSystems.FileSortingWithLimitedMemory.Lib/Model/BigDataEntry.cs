@@ -1,4 +1,6 @@
-﻿public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
+﻿namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+
+public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
 {
     public long Number { get; set; }
 
@@ -11,7 +13,7 @@
 
     public int CompareTo(BigDataEntry other)
     {
-        var nameCompare = Name.CompareTo(other.Name);
+        var nameCompare = String.Compare(Name, other.Name, StringComparison.Ordinal);
         return nameCompare != 0 ? nameCompare : Number.CompareTo(other.Number);
     }
 }

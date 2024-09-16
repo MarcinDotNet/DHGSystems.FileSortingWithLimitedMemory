@@ -12,7 +12,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
     {
         private readonly FileSortingAppConfiguration _configuration;
         private readonly IDhgSystemsLogger _logger;
-        private const string ClassName = "FCSimple";
+        private const string ClassName = "FileSortingController";
         private readonly IFileDividerWithSort _fileSorterDividerWithSort;
         private readonly IFileMergerWithSorting _fileMergerWithSorting;
         public const int StartMergeFileCount = 5;
@@ -62,11 +62,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
                     filesToProcess.Add(fileName);
                     if (firstFile)
                     {
-                        _logger.Info(ClassName, $"First file created: {fileName}");
                         firstFile = false;
-                        fileSizesInMB = new FileInfo(filesToProcess[0]).Length / 1024 / 1024;
-
-                        _logger.Info(ClassName, $" First file size {fileSizesInMB} MB.");
+                        _logger.Info(ClassName, $" irst file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
                     }
 
                     fileCount++;
@@ -90,12 +87,9 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
             {
                 filesToProcess.Add(fileName);
                 if (firstFile)
-                {
-                    _logger.Info(ClassName, $"First file created: {fileName}");
+                {   
                     firstFile = false;
-                    fileSizesInMB = new FileInfo(filesToProcess[0]).Length / 1024 / 1024;
-
-                    _logger.Info(ClassName, $" First file size {fileSizesInMB} MB.");
+                    _logger.Info(ClassName, $" irst file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
                 }
 
                 fileCount++;
@@ -113,7 +107,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
                 }
             }
 
-            _logger.Info(ClassName, $"Dequeing finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+            _logger.Info(ClassName, $"Dequeuing finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
 
             foreach (var task in mergeTasks)
             {

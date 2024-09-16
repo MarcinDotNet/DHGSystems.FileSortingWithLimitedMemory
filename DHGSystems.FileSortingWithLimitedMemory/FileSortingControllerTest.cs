@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
@@ -6,9 +7,8 @@ using DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
-using System.Diagnostics;
 
-namespace DHGSystems.FileSortingWithLimitedMemory
+namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
 {
     [TestClass]
     public class FileSortingControllerTest
@@ -83,7 +83,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         }
 
         [TestMethod]
-        public async Task Process_1GB_Multi_Thread_file_should_Be_positive()
+        public void Process_1GB_Multi_Thread_file_should_Be_positive()
         {
             if (Directory.Exists(tempPath))
             {

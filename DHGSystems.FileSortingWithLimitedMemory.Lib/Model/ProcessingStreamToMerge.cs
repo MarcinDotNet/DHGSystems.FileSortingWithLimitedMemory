@@ -2,12 +2,11 @@
 {
     public class ProcessingStreamToMerge
     {
-        private StreamReader _streamReader = null;
+        private StreamReader? _streamReader;
         private int position;
-        private int counter = 0;
         private string line = String.Empty;
         private BigDataEntry lastEntry;
-        private int _id = 0;
+        private int _id;
 
         public ProcessingStreamToMerge(int id, string fileName)
         {
@@ -30,7 +29,7 @@
         {
             line = _streamReader.ReadLine();
             if (line == null) return false;
-            position = line.IndexOf(".");
+            position = line.IndexOf(".", StringComparison.Ordinal);
             lastEntry.Number = long.Parse(line.Substring(0, position));
             lastEntry.Name = line.Substring(position + 1);
             return true;
