@@ -44,16 +44,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                         firstLine = false;
                     }
 
-                    if (list.Count <= degreeOfParallelismFactor *2)
-                    {
-                        item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
-                    }
-                    else
-                    {
-                        item = list.AsParallel().WithDegreeOfParallelism(list.Count/degreeOfParallelismFactor).OrderBy(x => x.LastEntry.Name)
-                            .ThenBy(x => x.LastEntry.Number).First();
-                    }
-
+                    item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
+                  
                     outputFile.Write(item.LastEntry.Number);
                     outputFile.Write(".");
                     outputFile.Write(item.LastEntry.Name);

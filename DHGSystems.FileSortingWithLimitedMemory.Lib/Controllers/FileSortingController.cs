@@ -15,7 +15,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
         private const string ClassName = "FileSortingController";
         private readonly IFileDividerWithSort _fileSorterDividerWithSort;
         private readonly IFileMergerWithSorting _fileMergerWithSorting;
-        public const int startMergeFileCount = 30;
+        public const int startMergeFileCount = 5;
 
         public FileSortingController(FileSortingAppConfiguration configuration,
             IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort, IFileMergerWithSorting fileMergerWithSorting)
@@ -64,7 +64,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
                     if (firstFile)
                     {
                         firstFile = false;
-                        _logger.Info(ClassName, $" irst file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
+                        _logger.Info(ClassName, $" First file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
                     }
 
                     fileCount++;

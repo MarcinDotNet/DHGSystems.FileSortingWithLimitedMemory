@@ -8,6 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DHGSystems.FileSortingWithLimitedMemory.Common\DHGSystems.FileSortingWithLimitedMemory.Common.csproj" />
+    <ProjectReference Include="..\DHGSystems.FileSortingWithLimitedMemory.Lib\DHGSystems.FileSortingWithLimitedMemory.Lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="nlog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
