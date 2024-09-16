@@ -1,6 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
 using System.Text;
-using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
@@ -25,7 +24,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     list.RemoveAt(i);
                 }
             }
-
 
             using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {

@@ -1,7 +1,6 @@
-using System.Collections.Concurrent;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
-
+using System.Collections.Concurrent;
 
 namespace DHGSystems.FileSortingWithLimitedMemory
 {
@@ -72,9 +71,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Assert.AreEqual(resultFileContent, fileContent);
         }
 
-
-
-
         [DataTestMethod]
         [DataRow(1, 5)]
         [DataRow(2, 3)]
@@ -82,7 +78,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory
         [DataRow(4, 2)]
         [DataRow(5, 1)]
         [DataRow(6, 1)]
-
         public void ProcesMultiLineFile_WithDifferent_DivideLineCount_Should_BePositive(long maxLineCount,
             int expectedFileCount)
         {

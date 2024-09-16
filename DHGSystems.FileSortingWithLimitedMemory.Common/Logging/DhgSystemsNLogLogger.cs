@@ -1,6 +1,5 @@
 ﻿using NLog;
 
-
 namespace DHGSystems.FileSortingWithLimitedMemory.Common.Logging
 {
     public class DhgSystemsNLogLogger : IDhgSystemsLogger

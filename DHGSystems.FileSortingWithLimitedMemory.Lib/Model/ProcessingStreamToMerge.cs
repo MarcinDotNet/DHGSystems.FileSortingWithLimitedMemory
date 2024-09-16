@@ -5,7 +5,7 @@
         private StreamReader _streamReader = null;
         private int position;
         private int counter = 0;
-        string line = String.Empty;
+        private string line = String.Empty;
         private BigDataEntry lastEntry;
         private int _id = 0;
 

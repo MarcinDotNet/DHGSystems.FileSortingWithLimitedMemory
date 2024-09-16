@@ -1,6 +1,5 @@
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 
-
 namespace DHGSystems.FileSortingWithLimitedMemory
 {
     [TestClass]
@@ -60,7 +59,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile }, outputFilePath);
             var fileContent = File.ReadAllLines(outputFilePath);
             var resultFileContent = File.ReadAllLines(emailTestResultFile);
-            Assert.AreEqual(resultFileContent.Length*6, fileContent.Length);
+            Assert.AreEqual(resultFileContent.Length * 6, fileContent.Length);
         }
     }
 }

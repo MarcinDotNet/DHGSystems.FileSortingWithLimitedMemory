@@ -1,6 +1,5 @@
 //namespace DHG.BigDataSorter.UnitTest;
 
-
 //[TestClass]
 //public class MergingTest
 //{
@@ -16,11 +15,10 @@
 //    private static string test05GB = @"D:\BigData\file_05GB.txt";
 //    private static string testFileName = test2GB;
 //    /// <summary>
-//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000  
+//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000
 //    /// </summary>
 //    private int maxLineCountPerFile = 20000000;
 //    private int maxLineCountPerFileArr = 10000000;
-
 
 //    [TestMethod]
 //    public void GenerateFileMethod()
@@ -50,7 +48,7 @@
 //                   $"bigfile_sorted_ALL_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}.txt")))
 //        {
 //            while (list.Any())
-//            {  
+//            {
 //                var item =  list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
 
 //               outputFile.Write(item.LastEntry.Number);

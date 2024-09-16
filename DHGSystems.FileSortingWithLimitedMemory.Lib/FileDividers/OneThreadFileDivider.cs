@@ -74,7 +74,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                                 {
                                     outputFile.WriteLine(allStrings[sorted[i].Name]);
                                 }
-
                             }
                             generatedFiles.Add(newfileName);
                             outputFile.Flush();
@@ -118,7 +117,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                     }
 
                     generatedFiles.Add(newfileName);
-                    
+
                     _logger.Info("OneThreadFileDivider", $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds:N1} ms," +
                                                          $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB File nr. {fileNumber} saved. File name {newfileName}.");
                 }

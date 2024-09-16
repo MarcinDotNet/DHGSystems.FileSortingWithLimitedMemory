@@ -1,9 +1,7 @@
 //using System.Diagnostics;
 //using System.Globalization;
 
-
 //namespace DHG.BigDataSorter.UnitTest;
-
 
 //[TestClass]
 //public class UnitTest2
@@ -19,7 +17,7 @@
 //    private static string test3GB = @"D:\BigData\file_3GB.txt";
 //    private static string testFileName = test10GB;
 //    /// <summary>
-//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000  
+//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000
 //    /// </summary>
 //    private int maxLineCountPerFile = 1000000;
 
@@ -54,7 +52,6 @@
 
 //        File.WriteAllLines(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllLines(testFileName));
 
-
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
@@ -67,19 +64,12 @@
 
 //        File.WriteAllBytes(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllBytes(testFileName));
 
-
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
 
-
-
-
-
-
 //    public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
 //    {
-
 //        public long Number { get; set; }
 
 //        public string Name { get; set; }

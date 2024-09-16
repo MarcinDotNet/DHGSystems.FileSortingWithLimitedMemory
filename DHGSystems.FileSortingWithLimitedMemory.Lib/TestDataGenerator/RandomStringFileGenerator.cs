@@ -25,7 +25,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
             }
         }
 
-
         public void GenerateTestFile(long numberOfRows, string outputFileFullFileName)
         {
             const string charsAllAllowed = "ABCDEFGHIJKLM NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -40,7 +39,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
             var longTables = new long[_diffValuesCount];
 
             char[] chars = new char[_maxStringPartLenght];
-
 
             for (int i = 0; i < _diffValuesCount; i++)
             {
@@ -60,7 +58,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
             // Write the string array to a new file named "WriteLines.txt".
             using (StreamWriter outputFile = new StreamWriter(outputFileFullFileName))
             {
-                outputFile.AutoFlush= false;
+                outputFile.AutoFlush = false;
                 long rowsToGen = numberOfRows;
 
                 if (_addStaticTestData)
@@ -79,7 +77,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
                         outputFile.Flush();
                         flushCount = 0;
                     }
-
                 }
                 outputFile.Write(longTables[Random.Shared.Next(_diffValuesCount)] + ". " + stringValues[Random.Shared.Next(_diffValuesCount)]);
 

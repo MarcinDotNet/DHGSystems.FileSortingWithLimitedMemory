@@ -1,12 +1,12 @@
-﻿using System.Collections.Concurrent;
-using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+using System.Collections.Concurrent;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
     public class FileMergerWithSortingWithAsyncWrite : IFileMergerWithSorting
     {
-        ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
-        bool _isWriting = true;
+        private ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
+        private bool _isWriting = true;
 
         public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
         {
@@ -29,25 +29,23 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
             }
 
             Task ascyWriteTask = Task.Run(() => WriteToFile(outputFilePath));
-          
-               
-                ProcessingStreamToMerge item;
-                while (list.Any())
+
+            ProcessingStreamToMerge item;
+            while (list.Any())
+            {
+                item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
+                _queue.Enqueue(item.LastEntry.Name);
+                elementRead = item.LoadNextEntry();
+                if (!elementRead)
                 {
-                    item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
-                    _queue.Enqueue(item.LastEntry.Name);
-                    elementRead = item.LoadNextEntry();
-                    if (!elementRead)
-                    {
-                        list.RemoveAll(x => x.Id == item.Id);
-                    }
+                    list.RemoveAll(x => x.Id == item.Id);
                 }
-                // locking not needed because we just change flag once
-                this._isWriting = false;
-            
+            }
+            // locking not needed because we just change flag once
+            this._isWriting = false;
+
             ascyWriteTask.Wait();
         }
-
 
         public void WriteToFile(string outputFilePath)
         {
@@ -65,7 +63,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                         // to not set new line at the beginning of the file and to not set new line at the end of the file
                         if (!firstLine)
                         {
-                          outputFile.Write(Environment.NewLine);
+                            outputFile.Write(Environment.NewLine);
                         }
                         else
                         {

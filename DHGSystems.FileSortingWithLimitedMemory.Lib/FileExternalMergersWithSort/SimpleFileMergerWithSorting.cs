@@ -24,7 +24,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 }
             }
 
-            
             using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {
                 outputFile.AutoFlush = false;
@@ -42,7 +41,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     {
                         firstLine = false;
                     }
-                    
+
                     item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
 
                     outputFile.Write(item.LastEntry.Number);

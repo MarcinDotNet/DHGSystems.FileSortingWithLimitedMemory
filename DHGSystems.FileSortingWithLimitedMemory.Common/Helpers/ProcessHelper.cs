@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Common.Helpers
 {
@@ -14,6 +9,5 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Common.Helpers
             var proc = Process.GetCurrentProcess();
             return proc.PrivateMemorySize64 / 1024 / 1024;
         }
-
     }
 }

@@ -1,7 +1,7 @@
-﻿using System.Collections.Concurrent;
-using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
+﻿using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
@@ -38,18 +38,18 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 int position;
                 int lineCount = 0;
                 int fileNumber = 1;
-                List<string[]> allStrings = new List<string[]> {};
+                List<string[]> allStrings = new List<string[]> { };
                 List<BigDataEntryRef[]> loadedValues = new List<BigDataEntryRef[]> { };
-                for (int  i= 0;  i< MaxNumberOfSortWorkers; i++)
+                for (int i = 0; i < MaxNumberOfSortWorkers; i++)
                 {
                     allStrings.Add(new string[maxLinesBeforeSort]);
                     loadedValues.Add(new BigDataEntryRef[maxLinesBeforeSort]);
                 }
                 string lineText = String.Empty;
                 int taskNumber = 0;
-                var currentStringArray= allStrings[taskNumber];
+                var currentStringArray = allStrings[taskNumber];
                 var currentLoadedValues = loadedValues[taskNumber];
-                List<(int,int)> listOfTasksParameters = new List<(int, int)>();
+                List<(int, int)> listOfTasksParameters = new List<(int, int)>();
                 while ((lineText = sr.ReadLine()) != null)
                 {
                     position = lineText.IndexOf(".");
@@ -63,7 +63,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                         totalRows += lineCount;
                         listOfTasksParameters.Add((taskNumber, fileNumber));
                         int lastElement = listOfTasksParameters.Count - 1;
-                        tasks[taskNumber] = Task.Run(()=>ProcessFile(listOfTasksParameters[lastElement].Item1, fileToDived, maxLinesBeforeSort, 
+                        tasks[taskNumber] = Task.Run(() => ProcessFile(listOfTasksParameters[lastElement].Item1, fileToDived, maxLinesBeforeSort,
                             watch, listOfTasksParameters[lastElement].Item2,
                             loadedValues[listOfTasksParameters[lastElement].Item1], allStrings[listOfTasksParameters[lastElement].Item1], generatedFilesQueue));
                         fileNumber++;
@@ -119,7 +119,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
 
                     generatedFilesQueue.Enqueue(newfileName);
 
-
                     _logger.Info(ClassName, $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds:N1} ms," +
                                             $" Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB File nr. {fileNumber} saved. File name {newfileName}.");
                 }
@@ -135,7 +134,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                     task.Wait();
                 }
             }
-             
+
             var responseFile = string.Empty;
             while (generatedFilesQueue.TryDequeue(out responseFile))
             {
@@ -143,7 +142,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
             }
         }
 
-        private void ProcessFile(int taskId,string fileToDived, long maxLinesBeforeSort, Stopwatch watch, int fileNumber,
+        private void ProcessFile(int taskId, string fileToDived, long maxLinesBeforeSort, Stopwatch watch, int fileNumber,
             BigDataEntryRef[] loadedValues, string[] allStrings, ConcurrentQueue<string> generatedFilesQueue)
         {
             var newfileName = GetFileName(fileNumber);
@@ -177,7 +176,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
 
             _logger.Info(ClassName, $"Dividing file {fileToDived}. Time {watch.ElapsedMilliseconds:N1} ms," +
                                     $" Memory usage {ProcessHelper.GetUsedMemoryInMb()} MB File nr. {fileNumber} saved.Task {taskId}. File name {newfileName}.");
-           
+
             generatedFilesQueue.Enqueue(newfileName);
         }
 

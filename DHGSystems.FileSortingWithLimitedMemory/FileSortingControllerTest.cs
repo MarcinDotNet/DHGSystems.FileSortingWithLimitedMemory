@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
@@ -7,7 +6,7 @@ using DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
-
+using System.Diagnostics;
 
 namespace DHGSystems.FileSortingWithLimitedMemory
 {
@@ -70,17 +69,17 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
             randomStringFileGenerator.GenerateTestFile(17000000, fileToSortName);
             Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
-            
+
             var configuration = GetFileSortedAppConfig();
             configuration.MaxLinesBeforeSort = 5000000;
             var oneThreadFileDivider = new OneThreadFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
             FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), oneThreadFileDivider, new SimpleFileMergerWithSorting());
             controller.SortFile(fileToSortName, sortedFileName);
             Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
-            var firstLine = FileHelper.GetLineContentFromFile(sortedFileName,1);
+            var firstLine = FileHelper.GetLineContentFromFile(sortedFileName, 1);
             var secondLine = FileHelper.GetLineContentFromFile(sortedFileName, 2);
-            Assert.AreEqual( Constants.FirstLineInTestFile, firstLine);
-            Assert.AreEqual(Constants.SecondLineInTestFile,secondLine);
+            Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
+            Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
 
         [TestMethod]
@@ -99,7 +98,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             var configuration = GetFileSortedAppConfig();
             configuration.MaxLinesBeforeSort = 5000000;
             var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
-            
+
             FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), fileDivider, new SimpleFileMergerWithSorting());
             controller.SortFile(fileToSortName, sortedFileName);
             Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
@@ -119,7 +118,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Directory.CreateDirectory(tempPath);
             var watcher = Stopwatch.StartNew();
             RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
-            randomStringFileGenerator.GenerateTestFile(17000000*10, fileToSortName);
+            randomStringFileGenerator.GenerateTestFile(17000000 * 10, fileToSortName);
             Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
 
             var configuration = GetFileSortedAppConfig();
@@ -134,7 +133,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
-
 
         [TestMethod]
         public void Process_1GB_Multi_Thread_BufforedMerge_file_should_Be_positive()
@@ -162,7 +160,6 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
 
-
         [TestMethod]
         public void Process_1GB_Multi_Thread_Async_Merge_file_should_Be_positive()
         {
@@ -189,15 +186,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
 
-
-
-
-
         public FileSortingAppConfiguration GetFileSortedAppConfig()
         {
             return new FileSortingAppConfiguration()
             {
-                MaxLinesBeforeSort = 500000,   
+                MaxLinesBeforeSort = 500000,
                 SortedFilePrefix = "sorted_file_",
                 TempFolderPath = tempPath
             };
