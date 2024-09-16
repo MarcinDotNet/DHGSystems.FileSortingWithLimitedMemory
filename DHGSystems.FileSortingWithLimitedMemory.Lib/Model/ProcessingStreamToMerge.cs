@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Model
+﻿namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Model
 {
-    public class ProcessingStreamToMerge
+    public class ProcessingStreamToMerge : IDisposable
     {
-        private StreamReader _streamReader = null;
+        private StreamReader? _streamReader;
         private int position;
-        private int counter = 0;
-        string line = String.Empty;
+        private string line = String.Empty;
         private BigDataEntry lastEntry;
-        private int _id = 0;
+        private int _id;
 
         public ProcessingStreamToMerge(int id, string fileName)
         {
@@ -32,11 +25,26 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Model
             set => lastEntry = value;
         }
 
+        public void Dispose()
+        {
+            if (_streamReader != null)
+            {
+                _streamReader.Close();
+                _streamReader.Dispose();
+                _streamReader = null;
+            }
+        }
+
         public bool LoadNextEntry()
         {
             line = _streamReader.ReadLine();
-            if (line == null) return false;
-            position = line.IndexOf(".");
+            if (line == null)
+            {
+                _streamReader.Close();
+                return false;
+            }
+
+            position = line.IndexOf(".", StringComparison.Ordinal);
             lastEntry.Number = long.Parse(line.Substring(0, position));
             lastEntry.Name = line.Substring(position + 1);
             return true;

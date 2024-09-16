@@ -1,9 +1,7 @@
 //using System.Diagnostics;
 //using System.Globalization;
 
-
 //namespace DHG.BigDataSorter.UnitTest;
-
 
 //[TestClass]
 //public class UnitTest2
@@ -19,7 +17,7 @@
 //    private static string test3GB = @"D:\BigData\file_3GB.txt";
 //    private static string testFileName = test10GB;
 //    /// <summary>
-//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000  
+//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000
 //    /// </summary>
 //    private int maxLineCountPerFile = 1000000;
 
@@ -28,7 +26,7 @@
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        using (StreamReader sr = File.OpenText(testFileName))
 //        {
 //            using (StreamWriter outputFile = new StreamWriter(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt")))
@@ -45,43 +43,35 @@
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
-    
+
 //    [TestMethod]
 //    public void ReadFullFileSaveFullFileTest()
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        File.WriteAllLines(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllLines(testFileName));
-        
-    
+
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
-    
+
 //    [TestMethod]
 //    public void ReadFullFileSaveFullFileTestBytes()
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
-        
+
 //        File.WriteAllBytes(Path.Combine(tempPathDivide, $"bigfile_ReadLineSaveLineTest_{DateTime.Now.ToString("yyyyMMdd_hhmmssfff")}_copy.txt"),File.ReadAllBytes(testFileName));
-        
-    
+
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString("N1") + $" File number   memory " + proc.PrivateMemorySize64.ToString("N1"));
 //    }
 
-
-
-
-   
-
 //    public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
 //    {
-       
 //        public long Number { get; set; }
-        
+
 //        public string Name { get; set; }
 
 //        public bool Equals(BigDataEntry other)

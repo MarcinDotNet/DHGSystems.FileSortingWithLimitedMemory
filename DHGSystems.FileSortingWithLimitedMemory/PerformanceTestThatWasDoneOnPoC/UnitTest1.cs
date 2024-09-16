@@ -1,9 +1,7 @@
 //using System.Diagnostics;
 //using System.Globalization;
 
-
 //namespace DHG.BigDataSorter.UnitTest;
-
 
 //[TestClass]
 //public class UnitTest1
@@ -20,11 +18,10 @@
 //    private static string test05GB = @"D:\BigData\file_05GB.txt";
 //    private static string testFileName = test2GB;
 //    /// <summary>
-//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000  
+//    /// max row lenght = 1024, avarage 512,  1 000 0000 KB/0,5KB  = 2 000 000
 //    /// </summary>
 //    private int maxLineCountPerFile = 20000000;
 //    private int maxLineCountPerFileArr = 10000000;
-
 
 //    [TestMethod]
 //    public void GenerateFileMethod()
@@ -108,8 +105,7 @@
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString() + " File saved: " + proc.PrivateMemorySize64.ToString("N1"));;
 //    }
-    
-    
+
 //    [TestMethod]
 //    public void SortFileOptimalizedOrderByWithStringIndex()
 //    {
@@ -147,12 +143,11 @@
 //                outputFile.WriteLine(sorted[i].Number);
 //            }
 //        }
-        
+
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString() + " File saved: " + proc.PrivateMemorySize64.ToString("N1"));;
 //    }
-    
-    
+
 //    [TestMethod]
 //    public void SortFileOptimalizedSort1()
 //    {
@@ -185,8 +180,8 @@
 //            for (int i = 0; i < data.Count(); i++)
 //            {
 //                outputFile.Write(data[i].Number);
-//                outputFile.Write(data[i].Name); 
-//                outputFile.Write(Environment.NewLine); 
+//                outputFile.Write(data[i].Name);
+//                outputFile.Write(Environment.NewLine);
 //            }
 //        }
 //        proc.Refresh();
@@ -199,7 +194,7 @@
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
 //        Console.WriteLine(proc.PrivateMemorySize64.ToString("N1"));;
-        
+
 //        using (StreamReader sr = File.OpenText(testFileName))
 //        {
 //            int position;
@@ -230,8 +225,7 @@
 //                            outputFile.Write(sorted[i].Number);
 //                            outputFile.Write(".");
 //                            outputFile.WriteLine(allStrings[sorted[i].Name]);
-                           
-                           
+
 //                        }
 //                    }
 //                    proc.Refresh();
@@ -257,7 +251,7 @@
 //                    }
 //                }
 //            };
-            
+
 //            proc.Refresh();
 //            Console.WriteLine(watch.ElapsedMilliseconds.ToString() + $" Rest sorted and saved {fileNumber} " + proc.PrivateMemorySize64.ToString("N1"));;
 //        }
@@ -265,14 +259,14 @@
 //        proc.Refresh();
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString() + " Total:  " + proc.PrivateMemorySize64.ToString("C"));
 //    }
-    
+
 //    [TestMethod]
 //    public void DivideFileIntoPartsV2()
 //    {
 //        var watch = System.Diagnostics.Stopwatch.StartNew();
 //        Process proc = Process.GetCurrentProcess();
 //        Console.WriteLine(proc.PrivateMemorySize64.ToString("N1"));;
-        
+
 //        using (StreamReader sr = File.OpenText(testFileName))
 //        {
 //            int position;
@@ -301,7 +295,7 @@
 //                            outputFile.Write(sorted[i].Number);
 //                            outputFile.Write(".");
 //                            outputFile.WriteLine(sorted[i].Name);
-                            
+
 //                        }
 //                    }
 
@@ -329,7 +323,7 @@
 //                    }
 //                }
 //            };
-            
+
 //            proc.Refresh();
 //            Console.WriteLine(watch.ElapsedMilliseconds.ToString() + $" Rest sorted and saved {fileNumber} " + proc.PrivateMemorySize64.ToString("N1"));;
 //        }
@@ -386,7 +380,6 @@
 //        Console.WriteLine(watch.ElapsedMilliseconds.ToString() + " " + proc.PrivateMemorySize64.ToString("N1"));;
 //    }
 
-
 //    public static string RandomString(int length)
 //    {
 //        const string chars = "ABCDEFGHIJKLM NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -396,9 +389,8 @@
 
 //    public struct BigDataEntry : IEquatable<BigDataEntry>, IComparable<BigDataEntry>
 //    {
-       
 //        public long Number { get; set; }
-        
+
 //        public string Name { get; set; }
 
 //        public bool Equals(BigDataEntry other)
@@ -412,11 +404,11 @@
 //            return nameCompare != 0 ? nameCompare : Number.CompareTo(other.Number);
 //        }
 //    }
-    
-//    public struct BigDataEntryRef 
+
+//    public struct BigDataEntryRef
 //    {
 //        public long Number { get; set; }
-        
+
 //        public long Name { get; set; }
 //    }
 //}

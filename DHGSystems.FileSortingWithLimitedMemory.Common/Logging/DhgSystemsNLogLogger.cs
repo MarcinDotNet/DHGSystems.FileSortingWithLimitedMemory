@@ -1,13 +1,12 @@
 ﻿using NLog;
 
-
 namespace DHGSystems.FileSortingWithLimitedMemory.Common.Logging
 {
-    public class NlogLogger : IDhgSystemsLogger
+    public class DhgSystemsNLogLogger : IDhgSystemsLogger
     {
         private readonly Logger _nlogLogger;
 
-        public NlogLogger()
+        public DhgSystemsNLogLogger()
         {
             _nlogLogger = LogManager.GetCurrentClassLogger();
         }
