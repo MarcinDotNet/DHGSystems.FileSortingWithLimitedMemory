@@ -10,48 +10,49 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
 {
     public class FileSortingController
     {
-        private readonly FileSortingAppConfiguration Configuration;
-        private readonly IDhgSystemsLogger Logger;
+        private readonly FileSortingAppConfiguration _configuration;
+        private readonly IDhgSystemsLogger _logger;
         private const string ClassName = "FCSimple";
+        private readonly IFileDividerWithSort _fileSorterDividerWithSort;
         
         public FileSortingController(FileSortingAppConfiguration configuration,
-            IDhgSystemsLogger logger)
+            IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort)
         {
-            this.Configuration = configuration;
-            this.Logger = logger;
+            this._configuration = configuration;
+            this._logger = logger;
+            this._fileSorterDividerWithSort = fileSorterDividerWithSort;
         }
 
         public void SortFile(string inputFileFullFileName, string outputFileFullFileName)
         {
-            Logger.Info(ClassName,$"Start sorting file {inputFileFullFileName}, file will be saved as {outputFileFullFileName}");
+            _logger.Info(ClassName,$"Start sorting file {inputFileFullFileName}, file will be saved as {outputFileFullFileName}");
             if (inputFileFullFileName == null) { throw new ArgumentNullException(nameof(inputFileFullFileName)); }
             if (outputFileFullFileName == null) { throw new ArgumentNullException(nameof(outputFileFullFileName)); }
             if (!File.Exists(inputFileFullFileName)) { throw new ArgumentException("Input file does not exist"); }
-            if (!Directory.Exists(Configuration.TempFolderPath))
+            if (!Directory.Exists(_configuration.TempFolderPath))
             {
-                Directory.CreateDirectory(Configuration.TempFolderPath);
+                Directory.CreateDirectory(_configuration.TempFolderPath);
             }
             
             decimal fileSizesInMB = new FileInfo(inputFileFullFileName).Length / 1024 /1024;
            
-            Logger.Info(ClassName, $"File size {fileSizesInMB} MB.");
+            _logger.Info(ClassName, $"File size {fileSizesInMB} MB.");
 
             var totalWatch = Stopwatch.StartNew();
-            Logger.Info(ClassName, $"Start dividing file into sorted files. Temp folder: {Configuration.TempFolderPath}. Max lines in one file: {Configuration.MaxLinesBeforeSort}");
-            var oneThreadFileDivider = new OneThreadFileDivider(Configuration.TempFolderPath, Configuration.SortedFilePrefix, Logger);
-            var files = oneThreadFileDivider.DivideFileWithSort(inputFileFullFileName, Configuration.MaxLinesBeforeSort).ToArray();
+            _logger.Info(ClassName, $"Start dividing file into sorted files. Temp folder: {_configuration.TempFolderPath}. Max lines in one file: {_configuration.MaxLinesBeforeSort}");
+             var files = this._fileSorterDividerWithSort.DivideFileWithSort(inputFileFullFileName, _configuration.MaxLinesBeforeSort).ToArray();
 
             var mergeWatch = Stopwatch.StartNew();
-            Logger.Info(ClassName, $"Dividing file into sorted files finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+            _logger.Info(ClassName, $"Dividing file into sorted files finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
              fileSizesInMB = new FileInfo(files[0]).Length / 1024 / 1024;
 
-            Logger.Info(ClassName, $"Total files created: {files.Length}.  First file size {fileSizesInMB} MB.");
+            _logger.Info(ClassName, $"Total files created: {files.Length}.  First file size {fileSizesInMB} MB.");
             var fileMerger = new SimpleFileMergerWithSorting();
             fileMerger.MergeFilesWithSort(files,outputFileFullFileName);
 
-            Logger.Info(ClassName, $"Merging files finished. Time {mergeWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+            _logger.Info(ClassName, $"Merging files finished. Time {mergeWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
 
-            Logger.Info(ClassName, $"Sorting file {inputFileFullFileName} finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+            _logger.Info(ClassName, $"Sorting file {inputFileFullFileName} finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
         }
     }
 }

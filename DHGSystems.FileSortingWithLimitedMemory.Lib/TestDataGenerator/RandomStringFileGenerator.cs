@@ -60,6 +60,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
             // Write the string array to a new file named "WriteLines.txt".
             using (StreamWriter outputFile = new StreamWriter(outputFileFullFileName))
             {
+                outputFile.AutoFlush= false;
                 long rowsToGen = numberOfRows;
 
                 if (_addStaticTestData)
@@ -68,10 +69,17 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
                     outputFile.WriteLine(Constants.SecondLineInTestFile);
                     outputFile.WriteLine(Constants.LastLineInTestFile);
                 }
-
+                int flushCount = 0;
                 for (var i = 0; i < rowsToGen; i++)
                 {
                     outputFile.WriteLine(longTables[Random.Shared.Next(_diffValuesCount)] + ". " + stringValues[Random.Shared.Next(_diffValuesCount)]);
+                    flushCount++;
+                    if (flushCount == 50000)
+                    {
+                        outputFile.Flush();
+                        flushCount = 0;
+                    }
+
                 }
                 outputFile.Write(longTables[Random.Shared.Next(_diffValuesCount)] + ". " + stringValues[Random.Shared.Next(_diffValuesCount)]);
 
@@ -79,6 +87,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
                 outputFile.WriteLine();
                 outputFile.WriteLine(Constants.FirstLineInTestFile);
                 outputFile.Write(Constants.BeforeLastLineInTestFile);
+                outputFile.Flush();
             }
         }
     }

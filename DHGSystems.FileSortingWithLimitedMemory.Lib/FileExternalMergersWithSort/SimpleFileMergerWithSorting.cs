@@ -24,10 +24,13 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 }
             }
 
+            
             using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {
+                outputFile.AutoFlush = false;
                 ProcessingStreamToMerge item;
-                bool firstLine = true; 
+                bool firstLine = true;
+                int flushCount = 0;
                 while (list.Any())
                 {
                     // to not set new line at the beginning of the file and to not set new line at the end of the file
@@ -51,7 +54,14 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     {
                         list.RemoveAll(x => x.Id == item.Id);
                     }
+                    flushCount++;
+                    if (flushCount == 50000)
+                    {
+                        outputFile.Flush();
+                        flushCount = 0;
+                    }
                 }
+                outputFile.Flush();
             }
         }
     }

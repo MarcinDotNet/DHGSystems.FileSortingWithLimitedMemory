@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
@@ -30,7 +31,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory
 
             Directory.CreateDirectory(tempPath);
             var configuration = GetFileSortedAppConfig();
-            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger());
+            var oneThreadFileDivider = new OneThreadFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), oneThreadFileDivider);
             controller.SortFile(oneRowTestFile, sortedFileName);
             var fileContent = File.ReadAllText(sortedFileName);
             var resultFileContent = File.ReadAllText(oneRowTestResultFile);
@@ -47,7 +49,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory
 
             Directory.CreateDirectory(tempPath);
             var configuration = GetFileSortedAppConfig();
-            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger());
+            var oneThreadFileDivider = new OneThreadFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), oneThreadFileDivider);
             controller.SortFile(emailTestFile, sortedFileName);
             var fileContent = File.ReadAllText(sortedFileName);
             var resultFileContent = File.ReadAllText(emailTestResultFile);
@@ -62,12 +65,15 @@ namespace DHGSystems.FileSortingWithLimitedMemory
                 Directory.Delete(tempPath, true);
             }
             Directory.CreateDirectory(tempPath);
+            var watcher = Stopwatch.StartNew();
             RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
-            randomStringFileGenerator.GenerateTestFile(15000000, fileToSortName);
+            randomStringFileGenerator.GenerateTestFile(17000000, fileToSortName);
+            Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
             
             var configuration = GetFileSortedAppConfig();
             configuration.MaxLinesBeforeSort = 5000000;
-            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger());
+            var oneThreadFileDivider = new OneThreadFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), oneThreadFileDivider);
             controller.SortFile(fileToSortName, sortedFileName);
             Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
             var firstLine = FileHelper.GetLineContentFromFile(sortedFileName,1);
@@ -76,31 +82,34 @@ namespace DHGSystems.FileSortingWithLimitedMemory
             Assert.AreEqual(Constants.SecondLineInTestFile,secondLine);
         }
 
-
-
-
-        [DataTestMethod]
-        [DataRow(1, 5)]
-        [DataRow(2, 3)]
-        [DataRow(3, 2)]
-        [DataRow(4, 2)]
-        [DataRow(5, 1)]
-        [DataRow(6, 1)]
-
-        public void ProcesMultiLineFile_WithDifferent_DivideLineCount_Should_BePositive(long maxLineCount,
-            int expectedFileCount)
+        [TestMethod]
+        public void Process_1GB_Multi_Thread_file_should_Be_positive()
         {
             if (Directory.Exists(tempPath))
             {
                 Directory.Delete(tempPath, true);
             }
-
             Directory.CreateDirectory(tempPath);
-            OneThreadFileDivider oneThreadFileDivider =
-                new OneThreadFileDivider(tempPath, "sorted_file_", new DhgSystemsNLogLogger());
-            var generatedFiles = oneThreadFileDivider.DivideFileWithSort(emailTestFile, maxLineCount).ToList();
-            Assert.AreEqual(expectedFileCount, generatedFiles.Count);
+            var watcher = Stopwatch.StartNew();
+            RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
+            randomStringFileGenerator.GenerateTestFile(17000000, fileToSortName);
+            Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
+
+            var configuration = GetFileSortedAppConfig();
+            configuration.MaxLinesBeforeSort = 5000000;
+            var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), fileDivider);
+            controller.SortFile(fileToSortName, sortedFileName);
+            Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
+            var firstLine = FileHelper.GetLineContentFromFile(sortedFileName, 1);
+            var secondLine = FileHelper.GetLineContentFromFile(sortedFileName, 2);
+            Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
+            Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
+
+
+
+
 
         public FileSortingAppConfiguration GetFileSortedAppConfig()
         {
