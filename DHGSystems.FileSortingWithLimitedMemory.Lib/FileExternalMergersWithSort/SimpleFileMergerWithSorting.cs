@@ -1,9 +1,11 @@
 ﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+using System.Linq;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
     public class SimpleFileMergerWithSorting : IFileMergerWithSorting
     {
+        private  const int degreeOfParallelismFactor = 5;
         public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
         {
             List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
@@ -42,7 +44,15 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                         firstLine = false;
                     }
 
-                    item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
+                    if (list.Count <= degreeOfParallelismFactor *2)
+                    {
+                        item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
+                    }
+                    else
+                    {
+                        item = list.AsParallel().WithDegreeOfParallelism(list.Count/degreeOfParallelismFactor).OrderBy(x => x.LastEntry.Name)
+                            .ThenBy(x => x.LastEntry.Number).First();
+                    }
 
                     outputFile.Write(item.LastEntry.Number);
                     outputFile.Write(".");
@@ -61,6 +71,11 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     }
                 }
                 outputFile.Flush();
+            }
+
+            foreach(var file in filesToMerge)
+            {
+                File.Delete(file);
             }
         }
     }

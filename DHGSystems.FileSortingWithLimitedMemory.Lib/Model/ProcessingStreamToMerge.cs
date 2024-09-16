@@ -1,6 +1,6 @@
 ﻿namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Model
 {
-    public class ProcessingStreamToMerge
+    public class ProcessingStreamToMerge : IDisposable
     {
         private StreamReader? _streamReader;
         private int position;
@@ -25,10 +25,25 @@
             set => lastEntry = value;
         }
 
+        public void Dispose()
+        {
+            if (_streamReader != null)
+            {
+                _streamReader.Close();
+                _streamReader.Dispose();
+                _streamReader = null;
+            }
+        }
+
         public bool LoadNextEntry()
         {
             line = _streamReader.ReadLine();
-            if (line == null) return false;
+            if (line == null)
+            {
+                _streamReader.Close();
+                return false;
+            }
+
             position = line.IndexOf(".", StringComparison.Ordinal);
             lastEntry.Number = long.Parse(line.Substring(0, position));
             lastEntry.Name = line.Substring(position + 1);

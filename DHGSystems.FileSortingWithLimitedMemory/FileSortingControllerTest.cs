@@ -96,7 +96,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
 
             var configuration = GetFileSortedAppConfig();
-            configuration.MaxLinesBeforeSort = 5000000;
+            configuration.MaxLinesBeforeSort = 1500000;
             var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
 
             FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), fileDivider, new SimpleFileMergerWithSorting());
@@ -122,6 +122,62 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
 
             var configuration = GetFileSortedAppConfig();
+            configuration.MaxLinesBeforeSort = 1500000;
+            var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), fileDivider, new SimpleFileMergerWithSorting());
+            controller.SortFile(fileToSortName, sortedFileName);
+            Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
+            var firstLine = FileHelper.GetLineContentFromFile(sortedFileName, 1);
+            var secondLine = FileHelper.GetLineContentFromFile(sortedFileName, 2);
+            Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
+            Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
+        }
+
+
+
+
+        [TestMethod]
+        public void Process_100GB_Multi_Thread_Small_file_should_Be_positive()
+        {
+            if (Directory.Exists(tempPath))
+            {
+                Directory.Delete(tempPath, true);
+            }
+            Directory.CreateDirectory(tempPath);
+            var watcher = Stopwatch.StartNew();
+            RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
+            randomStringFileGenerator.GenerateTestFile(17000000 * 100, fileToSortName);
+            Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
+
+            var configuration = GetFileSortedAppConfig();
+            configuration.MaxLinesBeforeSort = 1500000;
+            var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
+
+            FileSortingController controller = new FileSortingController(configuration, new DhgSystemsNLogLogger(), fileDivider, new SimpleFileMergerWithSorting());
+            controller.SortFile(fileToSortName, sortedFileName);
+            Console.WriteLine(ProcessHelper.GetUsedMemoryInMb());
+            var firstLine = FileHelper.GetLineContentFromFile(sortedFileName, 1);
+            var secondLine = FileHelper.GetLineContentFromFile(sortedFileName, 2);
+            Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
+            Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
+        }
+
+
+        [TestMethod]
+        public void Process_100GB_Multi_Thread_Big_file_should_Be_positive()
+        {
+            if (Directory.Exists(tempPath))
+            {
+                Directory.Delete(tempPath, true);
+            }
+            Directory.CreateDirectory(tempPath);
+            var watcher = Stopwatch.StartNew();
+            RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(100, 50000, true);
+            randomStringFileGenerator.GenerateTestFile(17000000 * 100, fileToSortName);
+            Console.WriteLine($"File generated in {watcher.ElapsedMilliseconds} ms");
+
+            var configuration = GetFileSortedAppConfig();
             configuration.MaxLinesBeforeSort = 5000000;
             var fileDivider = new MultiWorkersFileDivider(configuration.TempFolderPath, configuration.SortedFilePrefix, new DhgSystemsNLogLogger());
 
@@ -133,6 +189,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
+
 
         [TestMethod]
         public void Process_1GB_Multi_Thread_BufforedMerge_file_should_Be_positive()
