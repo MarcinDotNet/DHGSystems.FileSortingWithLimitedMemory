@@ -14,13 +14,16 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
         private readonly IDhgSystemsLogger _logger;
         private const string ClassName = "FCSimple";
         private readonly IFileDividerWithSort _fileSorterDividerWithSort;
+        private readonly IFileMergerWithSorting _fileMergerWithSorting;
         
         public FileSortingController(FileSortingAppConfiguration configuration,
-            IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort)
+            IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort, IFileMergerWithSorting fileMergerWithSorting)
         {
             this._configuration = configuration;
             this._logger = logger;
             this._fileSorterDividerWithSort = fileSorterDividerWithSort;
+            this._fileMergerWithSorting = fileMergerWithSorting;
+
         }
 
         public void SortFile(string inputFileFullFileName, string outputFileFullFileName)
@@ -47,8 +50,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
              fileSizesInMB = new FileInfo(files[0]).Length / 1024 / 1024;
 
             _logger.Info(ClassName, $"Total files created: {files.Length}.  First file size {fileSizesInMB} MB.");
-            var fileMerger = new SimpleFileMergerWithSorting();
-            fileMerger.MergeFilesWithSort(files,outputFileFullFileName);
+         
+            _fileMergerWithSorting.MergeFilesWithSort(files,outputFileFullFileName);
 
             _logger.Info(ClassName, $"Merging files finished. Time {mergeWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
 

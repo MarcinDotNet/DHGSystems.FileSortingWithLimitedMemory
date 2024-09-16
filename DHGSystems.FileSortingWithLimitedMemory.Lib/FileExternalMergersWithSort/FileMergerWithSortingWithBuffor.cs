@@ -1,8 +1,10 @@
-﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
+﻿using System.Runtime.InteropServices;
+using System.Text;
+using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
-    public class SimpleFileMergerWithSorting : IFileMergerWithSorting
+    public class FileMergerWithSortingWithBuffor : IFileMergerWithSorting
     {
         public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
         {
@@ -24,30 +26,31 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 }
             }
 
-            
+
             using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {
-                outputFile.AutoFlush = false;
                 ProcessingStreamToMerge item;
                 bool firstLine = true;
                 int flushCount = 0;
+                Task writerTask = null;
+                StringBuilder sb = new StringBuilder();
                 while (list.Any())
                 {
                     // to not set new line at the beginning of the file and to not set new line at the end of the file
                     if (!firstLine)
                     {
-                        outputFile.WriteLine();
+                        sb.AppendLine();
                     }
                     else
                     {
                         firstLine = false;
                     }
-                    
+
                     item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
 
-                    outputFile.Write(item.LastEntry.Number);
-                    outputFile.Write(".");
-                    outputFile.Write(item.LastEntry.Name);
+                    sb.Append(item.LastEntry.Number);
+                    sb.Append(".");
+                    sb.Append(item.LastEntry.Name);
 
                     elementRead = item.LoadNextEntry();
                     if (!elementRead)
@@ -55,13 +58,19 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                         list.RemoveAll(x => x.Id == item.Id);
                     }
                     flushCount++;
-                    if (flushCount == 5000)
+                    if (flushCount == 10000)
                     {
-                        outputFile.Flush();
-                        flushCount = 0;
+                        if (writerTask != null)
+                        {
+                            writerTask.Wait();
+                        }
+                        writerTask = outputFile.WriteAsync(sb.ToString());
+                        sb.Clear();
                     }
                 }
-                outputFile.Flush();
+                outputFile.Write(sb.ToString());
+                sb.Clear();
+                outputFile.Close();
             }
         }
     }
