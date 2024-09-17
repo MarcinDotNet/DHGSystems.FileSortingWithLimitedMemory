@@ -41,7 +41,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 int taskNumber = 0;
                 List<string[]> allStrings = new List<string[]>();
                 List<BigDataEntryRef[]> loadedValues = new List<BigDataEntryRef[]>();
-                
+
                 //initialize memory
                 for (int i = 0; i < MaxNumberOfSortWorkers; i++)
                 {
@@ -54,7 +54,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers
                 List<(int, int)> listOfTasksParameters = new List<(int, int)>();
                 while ((lineText = sr.ReadLine()) != null)
                 {
-                    position = lineText.IndexOf(".", StringComparison.Ordinal);
+                    position = lineText.IndexOf(".", StringComparison.CurrentCulture);
                     currentStringArray[lineCount] = lineText.Substring(position + 1);
                     currentLoadedValues[lineCount].Number = long.Parse(lineText.Substring(0, position));
                     currentLoadedValues[lineCount].Name = lineCount;

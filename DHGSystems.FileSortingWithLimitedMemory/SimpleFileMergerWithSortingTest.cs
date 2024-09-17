@@ -22,7 +22,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Directory.CreateDirectory(tempPath);
 
             SimpleFileMergerWithSorting simpleFileMergerWithSorting = new SimpleFileMergerWithSorting();
-            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { oneRowTestFile }, outputFilePath);
+            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { oneRowTestFile }, outputFilePath, false);
             var fileContent = File.ReadAllText(outputFilePath);
             var resultFileContent = File.ReadAllText(oneRowTestResultFile);
             Assert.AreEqual(resultFileContent, fileContent);
@@ -39,7 +39,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Directory.CreateDirectory(tempPath);
 
             SimpleFileMergerWithSorting simpleFileMergerWithSorting = new SimpleFileMergerWithSorting();
-            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { emailTestResultFile }, outputFilePath);
+            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { emailTestResultFile }, outputFilePath, false);
             var fileContent = File.ReadAllText(outputFilePath);
             var resultFileContent = File.ReadAllText(emailTestResultFile);
             Assert.AreEqual(resultFileContent, fileContent);
@@ -56,7 +56,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Directory.CreateDirectory(tempPath);
 
             SimpleFileMergerWithSorting simpleFileMergerWithSorting = new SimpleFileMergerWithSorting();
-            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile }, outputFilePath);
+            simpleFileMergerWithSorting.MergeFilesWithSort(new string[] { emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile, emailTestResultFile }, outputFilePath, false);
             var fileContent = File.ReadAllLines(outputFilePath);
             var resultFileContent = File.ReadAllLines(emailTestResultFile);
             Assert.AreEqual(resultFileContent.Length * 6, fileContent.Length);

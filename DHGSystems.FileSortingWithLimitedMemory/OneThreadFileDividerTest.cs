@@ -1,6 +1,6 @@
-using System.Collections.Concurrent;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.FileDividers;
+using System.Collections.Concurrent;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
 {

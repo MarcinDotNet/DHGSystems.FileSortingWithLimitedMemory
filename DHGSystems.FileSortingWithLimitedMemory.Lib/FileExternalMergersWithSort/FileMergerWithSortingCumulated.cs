@@ -1,51 +1,60 @@
-﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
-using System.Linq;
+﻿using DHGSystems.FileSortingWithLimitedMemory.Common.Logging;
+using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
     public class FileMergerWithSortingCumulated : IFileMergerWithSorting
     {
-        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
+        private readonly IDhgSystemsLogger _logger;
+        private const string ClassName = "FileMergerWithSortingCumulated";
+
+        public FileMergerWithSortingCumulated(IDhgSystemsLogger logger)
         {
-            int startFileCount = filesToMerge.Length;
-            
-            // open files 
-            StreamReader[] streamReaders = new StreamReader[startFileCount];
+            this._logger = logger;
+        }
+
+        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath, bool deleteFile = true)
+        {
+            int fileToProcess = filesToMerge.Length;
+            string lastLine = String.Empty;
+            _logger.Info(ClassName, $"Run for output file: {outputFilePath}. Files to process {fileToProcess}");
+            // open files
+            StreamReader[] streamReaders = new StreamReader[fileToProcess];
             for (int i = 0; i < filesToMerge.Length; i++)
             {
-               streamReaders[i] = new StreamReader(filesToMerge[i]);
+                streamReaders[i] = new StreamReader(filesToMerge[i]);
             }
 
-            for (int i = 0; i < startFileCount; i++)
+            int position;
+            string lineText = String.Empty;
+            BigDataEntryWithFileId[] entries = new BigDataEntryWithFileId[fileToProcess];
+            for (int i = fileToProcess - 1; i > -1; i--)
             {
-                
-            }
-            
-            List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
-            for (int i = 0; i < filesToMerge.Length; i++)
-            {
-                list.Add(new ProcessingStreamToMerge(i, filesToMerge[i]));
-            }
-
-            bool elementRead;
-
-            //Load first element from each file
-            for (int i = list.Count - 1; i > -1; i--)
-            {
-                elementRead = list[i].LoadNextEntry();
-                if (!elementRead)
+                lineText = streamReaders[i].ReadLine();
+                if (lineText == null)
                 {
-                    list.RemoveAt(i);
+                    streamReaders[i].Close();
+                    streamReaders[i].Dispose();
+                    var entriesList = entries.ToList();
+                    entriesList.RemoveAt(i);
+                    entries = entriesList.ToArray();
+                    _logger.Info(ClassName, $"Run for output file: {outputFilePath}. Files fully read {filesToMerge[i]}");
+                    continue;
                 }
+
+                position = lineText.IndexOf(".", StringComparison.CurrentCulture);
+                entries[i].Number = long.Parse(lineText.Substring(0, position));
+                entries[i].Name = lineText.Substring(position + 1);
+                entries[i].FileId = i;
             }
 
             using (StreamWriter outputFile = new StreamWriter(outputFilePath))
             {
                 outputFile.AutoFlush = false;
-                ProcessingStreamToMerge item;
                 bool firstLine = true;
                 int flushCount = 0;
-                while (list.Any())
+
+                while (fileToProcess > 0)
                 {
                     // to not set new line at the beginning of the file and to not set new line at the end of the file
                     if (!firstLine)
@@ -56,18 +65,34 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     {
                         firstLine = false;
                     }
+                    Array.Sort(entries);
 
-                    item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
-                  
-                    outputFile.Write(item.LastEntry.Number);
+                    outputFile.Write(entries[0].Number);
                     outputFile.Write(".");
-                    outputFile.Write(item.LastEntry.Name);
+                    outputFile.Write(entries[0].Name);
 
-                    elementRead = item.LoadNextEntry();
-                    if (!elementRead)
+                    lineText = streamReaders[entries[0].FileId].ReadLine();
+
+                    if (lineText == null)
                     {
-                        list.RemoveAll(x => x.Id == item.Id);
+                        streamReaders[entries[0].FileId].Close();
+                        streamReaders[entries[0].FileId].Dispose();
+                        fileToProcess--;
+                        if (fileToProcess == 0)
+                        {
+                            lastLine = entries[0].Number + "." + entries[0].Name;
+                        }
+                        _logger.Info(ClassName, $"Run for output file: {outputFilePath}. Files fully read {filesToMerge[entries[0].FileId]}");
+                        var entriesList = entries.ToList();
+                        entriesList.RemoveAt(0);
+                        entries = entriesList.ToArray();
+
+                        continue;
                     }
+                    position = lineText.IndexOf(".", StringComparison.CurrentCulture);
+                    entries[0].Number = long.Parse(lineText.Substring(0, position));
+                    entries[0].Name = lineText.Substring(position + 1);
+
                     flushCount++;
                     if (flushCount == 5000)
                     {
@@ -78,10 +103,18 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 outputFile.Flush();
             }
 
-            foreach(var file in filesToMerge)
+            if (deleteFile)
             {
-                File.Delete(file);
+                foreach (var file in filesToMerge)
+                {
+                    if (File.Exists(file))
+                    {
+                        _logger.Info(ClassName, $"Run for output file: {outputFilePath} Deleting file : {file}");
+                        File.Delete(file);
+                    }
+                }
             }
+            _logger.Info(ClassName, $"Run for output file: {outputFilePath}. File saved. Last line {lastLine}");
         }
     }
 }

@@ -8,7 +8,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
         private ConcurrentQueue<string> _queue = new ConcurrentQueue<string>();
         private bool _isWriting = true;
 
-        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
+        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath, bool deleteFile = true)
         {
             List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
             for (int i = 0; i < filesToMerge.Length; i++)
@@ -45,6 +45,17 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
             this._isWriting = false;
 
             ascyWriteTask.Wait();
+
+            if (deleteFile)
+            {
+                foreach (var file in filesToMerge)
+                {
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
+                    }
+                }
+            }
         }
 
         public void WriteToFile(string outputFilePath)

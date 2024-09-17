@@ -15,7 +15,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
         private const string ClassName = "FileSortingController";
         private readonly IFileDividerWithSort _fileSorterDividerWithSort;
         private readonly IFileMergerWithSorting _fileMergerWithSorting;
-        public const int startMergeFileCount = 5;
+        public readonly int _startMergeFileCount = 5;
 
         public FileSortingController(FileSortingAppConfiguration configuration,
             IDhgSystemsLogger logger, IFileDividerWithSort fileSorterDividerWithSort, IFileMergerWithSorting fileMergerWithSorting)
@@ -24,9 +24,10 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
             this._logger = logger;
             this._fileSorterDividerWithSort = fileSorterDividerWithSort;
             this._fileMergerWithSorting = fileMergerWithSorting;
+            this._startMergeFileCount = configuration.StartMergeFileCount;
         }
 
-        public void SortFile(string inputFileFullFileName, string outputFileFullFileName)
+        public void SortFile(string inputFileFullFileName, string outputFileFullFileName, bool deleteSortFile = true)
         {
             _logger.Info(ClassName, $"Start sorting file {inputFileFullFileName}, file will be saved as {outputFileFullFileName}");
             if (inputFileFullFileName == null) { throw new ArgumentNullException(nameof(inputFileFullFileName)); }
@@ -64,21 +65,22 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
                     if (firstFile)
                     {
                         firstFile = false;
-                        _logger.Info(ClassName, $" First file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
+                        _logger.Info(ClassName, $" First file created: {fileName}. File size {FileHelper.GetFileSizeInMB(fileName)} MB.");
                     }
 
                     fileCount++;
-                    if (filesToProcess.Count == startMergeFileCount)
+                    if (filesToProcess.Count == _startMergeFileCount)
                     {
                         int currentMergeFileTaskId = mergeFileTaskId;
                         listOfMergeTasksParameters.Add((GetMergeFileName(currentMergeFileTaskId), filesToProcess.ToArray()));
-                        _logger.Info(ClassName, $"Start merging {startMergeFileCount} files into {listOfMergeTasksParameters[mergeFileTaskId].Item1} . Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
+                        _logger.Info(ClassName, $"Start merging {_startMergeFileCount} files into {listOfMergeTasksParameters[mergeFileTaskId].Item1} . Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
                         mergeTasks.Add(Task.Run(() =>
                         {
                             string fileName = listOfMergeTasksParameters[currentMergeFileTaskId].Item1;
                             this._fileMergerWithSorting.MergeFilesWithSort(
                                     listOfMergeTasksParameters[currentMergeFileTaskId].Item2,
-                                    listOfMergeTasksParameters[currentMergeFileTaskId].Item1);
+                                    listOfMergeTasksParameters[currentMergeFileTaskId].Item1,
+                                    deleteSortFile);
                             filesProcessedQueue.Enqueue(fileName);
                         }));
                         mergeFileTaskId++;
@@ -95,13 +97,13 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
             {
                 filesToProcess.Add(fileName);
                 if (firstFile)
-                {   
+                {
                     firstFile = false;
-                    _logger.Info(ClassName, $" First file created: {fileName}. File size {FileHelper.GetFileSizeInMb(fileName)} MB.");
+                    _logger.Info(ClassName, $" First file created: {fileName}. File size {FileHelper.GetFileSizeInMB(fileName)} MB.");
                 }
 
                 fileCount++;
-                if (filesToProcess.Count == startMergeFileCount)
+                if (filesToProcess.Count == _startMergeFileCount)
                 {
                     int currentMergeFileTaskId = mergeFileTaskId;
                     listOfMergeTasksParameters.Add((GetMergeFileName(currentMergeFileTaskId), filesToProcess.ToArray()));
@@ -110,7 +112,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
                         string fileName = listOfMergeTasksParameters[currentMergeFileTaskId].Item1;
                         this._fileMergerWithSorting.MergeFilesWithSort(
                             listOfMergeTasksParameters[currentMergeFileTaskId].Item2,
-                            listOfMergeTasksParameters[currentMergeFileTaskId].Item1);
+                            listOfMergeTasksParameters[currentMergeFileTaskId].Item1,
+                            deleteSortFile);
                         filesProcessedQueue.Enqueue(fileName);
                     }));
 
@@ -125,11 +128,33 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
 
             _logger.Info(ClassName, $"Dequeuing finished. Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB");
 
-            foreach (var task in mergeTasks)
+            for (int i = 0; i < mergeTasks.Count; i++)
             {
-                if (task != null)
+                if (mergeTasks[i] != null)
                 {
-                    task.Wait();
+                    mergeTasks[i].Wait();
+                }
+
+                if (filesToProcess.Count == _startMergeFileCount)
+                {
+                    int currentMergeFileTaskId = mergeFileTaskId;
+                    listOfMergeTasksParameters.Add((GetMergeFileName(currentMergeFileTaskId), filesToProcess.ToArray()));
+                    mergeTasks.Add(Task.Run(() =>
+                    {
+                        string fileName = listOfMergeTasksParameters[currentMergeFileTaskId].Item1;
+                        this._fileMergerWithSorting.MergeFilesWithSort(
+                            listOfMergeTasksParameters[currentMergeFileTaskId].Item2,
+                            listOfMergeTasksParameters[currentMergeFileTaskId].Item1,
+                            deleteSortFile);
+                        filesProcessedQueue.Enqueue(fileName);
+                    }));
+
+                    mergeFileTaskId++;
+                    filesToProcess.Clear();
+                    if (mergeWatch == null)
+                    {
+                        mergeWatch = Stopwatch.StartNew();
+                    }
                 }
             }
 
@@ -141,8 +166,8 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.Controllers
             }
             var restOfFiles = filesToProcess.ToList();
 
-           var filesAlreadyMerged = listOfMergeTasksParameters.SelectMany(x => x.Item2).ToList();
-            restOfFiles.AddRange(listOfMergeTasksParameters.Select(x => x.Item1).Where(y=> !filesAlreadyMerged.Any(z=>z==y)));
+            var filesAlreadyMerged = listOfMergeTasksParameters.SelectMany(x => x.Item2).ToList();
+            restOfFiles.AddRange(listOfMergeTasksParameters.Select(x => x.Item1).Where(y => !filesAlreadyMerged.Any(z => z == y)));
 
             _logger.Info(ClassName, $"Start final merging files into {outputFileFullFileName} . Time {totalWatch.ElapsedMilliseconds:N1} ms. Memory usage {ProcessHelper.GetUsedMemoryInMb():N1} MB. Files to process: {restOfFiles.Count}");
 

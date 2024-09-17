@@ -5,7 +5,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
 {
     public class FileMergerWithSortingWithBuffor : IFileMergerWithSorting
     {
-        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
+        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath, bool deleteFile = true)
         {
             List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
             for (int i = 0; i < filesToMerge.Length; i++)
@@ -69,6 +69,17 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 outputFile.Write(sb.ToString());
                 sb.Clear();
                 outputFile.Close();
+
+                if (deleteFile)
+                {
+                    foreach (var file in filesToMerge)
+                    {
+                        if (File.Exists(file))
+                        {
+                            File.Delete(file);
+                        }
+                    }
+                }
             }
         }
     }

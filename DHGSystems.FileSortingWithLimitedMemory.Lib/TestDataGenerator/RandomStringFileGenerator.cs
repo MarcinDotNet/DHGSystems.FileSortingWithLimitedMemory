@@ -28,7 +28,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
         public void GenerateTestFile(long numberOfRows, string outputFileFullFileName)
         {
             const string charsAllAllowed = "ABCDEFGHIJKLM NOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-            const string charsAllowedForBegginig = "BCDEFGHIJKLMNOPQRSTUVWXYZbcdefghijklmnopqrstuvwxy";
+            const string charsAllowedForBeggining = "BCDEFGHIJKLMNOPQRSTUVWXYbcdefghijklmnopqrstuvwxy";
 
             if (numberOfRows < 10)
             {
@@ -42,7 +42,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
 
             for (int i = 0; i < _diffValuesCount; i++)
             {
-                chars[0] = charsAllowedForBegginig[Random.Shared.Next(charsAllowedForBegginig.Length)];
+                chars[0] = charsAllowedForBeggining[Random.Shared.Next(charsAllowedForBeggining.Length)];
 
                 int currentStringLenght = Random.Shared.Next(2, _maxStringPartLenght);
 
