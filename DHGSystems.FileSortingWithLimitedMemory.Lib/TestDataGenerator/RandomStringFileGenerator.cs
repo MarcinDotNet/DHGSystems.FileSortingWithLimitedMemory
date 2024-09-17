@@ -63,7 +63,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator
 
                 if (_addStaticTestData)
                 {
-                    rowsToGen = rowsToGen - 4;
+                    rowsToGen = rowsToGen - 5;
                     outputFile.WriteLine(Constants.SecondLineInTestFile);
                     outputFile.WriteLine(Constants.LastLineInTestFile);
                 }

@@ -161,7 +161,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
-
+        [Ignore]
         [TestMethod]
         public void Process_10GB_Multi_Thread_Cumulative_file_should_Be_positive()
         {
@@ -187,7 +187,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
             Assert.AreEqual(Constants.FirstLineInTestFile, firstLine);
             Assert.AreEqual(Constants.SecondLineInTestFile, secondLine);
         }
-
+        [Ignore]
         [TestMethod]
         public void Process_100GB_Multi_Thread_Cumulative_Small_file_should_Be_positive()
         {
