@@ -26,4 +26,4 @@ What could make solutions faster:
    
 
 Results:
-  - sorting the 100772 MB. file   is taking arounf 37.81 minute (Time 2,269,802.0 ms) disk speed is limit. Max memory usage  2148 MB  - max line length 100 chars
+  - sorting the File size 103385 MB.    is taking around 17.21 minute (Time 1,033,585.0 ms) disk speed is limit. Max memory usage  <9 GB  - max line length 1024 chars

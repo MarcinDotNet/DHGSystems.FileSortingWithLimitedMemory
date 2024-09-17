@@ -42,18 +42,18 @@ namespace DHGSystems.FileSortingWithLimitedMemory.App
                 RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(maxRowSize, diffValues, true);
                 if (args[0].ToLower() == "random1gb")
                 {
-                    _logger.Error($"Start generating 1 GB file with {rowsFactorFor1GB} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+                    _logger.Info($"Start generating 1 GB file with {rowsFactorFor1GB} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
                     randomStringFileGenerator.GenerateTestFile(rowsFactorFor1GB, _fileToSortName);
                 }
                 if (args[0].ToLower() == "random10gb")
                 {
-                    _logger.Error($"Start generating 10 GB file with {rowsFactorFor1GB *10} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+                    _logger.Info($"Start generating 10 GB file with {rowsFactorFor1GB *10} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
                     randomStringFileGenerator.GenerateTestFile((rowsFactorFor1GB) * 10, _fileToSortName);
                 }
 
                 if (args[0].ToLower() == "random100gb")
                 {
-                    _logger.Error($"Start generating 100 GB file with {rowsFactorFor1GB * 100} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+                    _logger.Info($"Start generating 100 GB file with {rowsFactorFor1GB * 100} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
 
                     randomStringFileGenerator.GenerateTestFile((rowsFactorFor1GB) * 100, _fileToSortName);
                 }
