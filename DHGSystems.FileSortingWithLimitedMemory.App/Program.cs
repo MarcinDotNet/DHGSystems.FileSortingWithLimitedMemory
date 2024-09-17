@@ -31,22 +31,31 @@ namespace DHGSystems.FileSortingWithLimitedMemory.App
                 _logger.Info("Now we set parameter to Random1GB");
                 args = new string[] { "Random1GB" };
             }
+            
             var watcher = Stopwatch.StartNew();
             if (args[0].ToLower().Contains("random"))
             {
-                RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(1024, 500000, true);
+                int maxRowSize = 1024;
+                int diffValues = 500000;
+                int rowsFactorFor1GB = 15500003 / 8;
+
+                RandomStringFileGenerator randomStringFileGenerator = new RandomStringFileGenerator(maxRowSize, diffValues, true);
                 if (args[0].ToLower() == "random1gb")
                 {
-                    randomStringFileGenerator.GenerateTestFile(16500003, _fileToSortName);
+                    _logger.Error($"Start generating 1 GB file with {rowsFactorFor1GB} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+                    randomStringFileGenerator.GenerateTestFile(rowsFactorFor1GB, _fileToSortName);
                 }
                 if (args[0].ToLower() == "random10gb")
                 {
-                    randomStringFileGenerator.GenerateTestFile(16500003 * 10, _fileToSortName);
+                    _logger.Error($"Start generating 10 GB file with {rowsFactorFor1GB *10} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+                    randomStringFileGenerator.GenerateTestFile((rowsFactorFor1GB) * 10, _fileToSortName);
                 }
 
                 if (args[0].ToLower() == "random100gb")
                 {
-                    randomStringFileGenerator.GenerateTestFile(16500003 * 100, _fileToSortName);
+                    _logger.Error($"Start generating 100 GB file with {rowsFactorFor1GB * 100} rows. Max rows size {maxRowSize}. Different values {diffValues} ");
+
+                    randomStringFileGenerator.GenerateTestFile((rowsFactorFor1GB) * 100, _fileToSortName);
                 }
                 _logger.Info($"File  {fileToSortName} generated in {watcher.ElapsedMilliseconds} ms");
             }
@@ -71,9 +80,10 @@ namespace DHGSystems.FileSortingWithLimitedMemory.App
 
             if (FileHelper.GetFileSizeInMB(fileToSortName) > 12000)
             {
-                fileSortingAppConfiguration.StartMergeFileCount = 7;
+                _logger.Error("File bigger then 12000 MB StartMergeFileCount set to 7 ");
+                fileSortingAppConfiguration.StartMergeFileCount = 7;// more work on CPU
             }
-            
+            _logger.Info($"Configuration set to  MaxLinesBeforeSort {fileSortingAppConfiguration.MaxLinesBeforeSort}, StartMergeFileCount {fileSortingAppConfiguration.StartMergeFileCount}, TempFolderPath {fileSortingAppConfiguration.TempFolderPath}");
             var fileDivider = new MultiWorkersFileDivider(fileSortingAppConfiguration.TempFolderPath, fileSortingAppConfiguration.SortedFilePrefix, new DhgSystemsNLogLogger());
 
             FileSortingController controller = new FileSortingController(fileSortingAppConfiguration, new DhgSystemsNLogLogger(), fileDivider, new FileMergerWithSortingCumulated(new DhgSystemsNLogLogger()));
