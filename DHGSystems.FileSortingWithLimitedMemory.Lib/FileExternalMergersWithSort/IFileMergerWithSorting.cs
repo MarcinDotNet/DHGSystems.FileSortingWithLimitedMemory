@@ -2,6 +2,6 @@
 {
     public interface IFileMergerWithSorting
     {
-        void MergeFilesWithSort(string[] filesToMerge, string outputFilePath);
+        void MergeFilesWithSort(string[] filesToMerge, string outputFilePath, bool deleteFile = true);
     }
 }

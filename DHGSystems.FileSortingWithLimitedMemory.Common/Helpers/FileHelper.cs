@@ -20,7 +20,7 @@
             return String.Empty;
         }
 
-        public static long GetFileSizeInMb(string fileName)
+        public static long GetFileSizeInMB(string fileName)
         {
             return new FileInfo(fileName).Length / 1024 / 1024;
         }

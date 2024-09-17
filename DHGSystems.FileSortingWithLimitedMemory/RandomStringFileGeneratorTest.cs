@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using DHGSystems.FileSortingWithLimitedMemory.Common;
 using DHGSystems.FileSortingWithLimitedMemory.Common.Helpers;
 using DHGSystems.FileSortingWithLimitedMemory.Lib.TestDataGenerator;
+using System.Diagnostics;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.UnitTests
 {

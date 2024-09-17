@@ -1,12 +1,12 @@
 ﻿using DHGSystems.FileSortingWithLimitedMemory.Lib.Model;
-using System.Linq;
 
 namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSort
 {
     public class SimpleFileMergerWithSorting : IFileMergerWithSorting
     {
-        private  const int degreeOfParallelismFactor = 5;
-        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath)
+        private const int degreeOfParallelismFactor = 5;
+
+        public void MergeFilesWithSort(string[] filesToMerge, string outputFilePath, bool deleteFile = true)
         {
             List<ProcessingStreamToMerge> list = new List<ProcessingStreamToMerge>();
             for (int i = 0; i < filesToMerge.Length; i++)
@@ -45,7 +45,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                     }
 
                     item = list.OrderBy(x => x.LastEntry.Name).ThenBy(x => x.LastEntry.Number).First();
-                  
+
                     outputFile.Write(item.LastEntry.Number);
                     outputFile.Write(".");
                     outputFile.Write(item.LastEntry.Name);
@@ -65,9 +65,15 @@ namespace DHGSystems.FileSortingWithLimitedMemory.Lib.FileExternalMergersWithSor
                 outputFile.Flush();
             }
 
-            foreach(var file in filesToMerge)
+            if (deleteFile)
             {
-                File.Delete(file);
+                foreach (var file in filesToMerge)
+                {
+                    if (File.Exists(file))
+                    {
+                        File.Delete(file);
+                    }
+                }
             }
         }
     }

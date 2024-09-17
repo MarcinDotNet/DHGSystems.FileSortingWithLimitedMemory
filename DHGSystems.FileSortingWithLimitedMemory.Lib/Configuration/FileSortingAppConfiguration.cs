@@ -5,5 +5,6 @@
         public string SortedFilePrefix { get; set; }
         public string TempFolderPath { get; set; }
         public long MaxLinesBeforeSort { get; set; }
+        public int StartMergeFileCount { get; set; }
     }
 }
