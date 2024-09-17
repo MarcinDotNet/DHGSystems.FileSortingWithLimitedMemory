@@ -63,7 +63,7 @@ namespace DHGSystems.FileSortingWithLimitedMemory.App
 
             FileSortingAppConfiguration fileSortingAppConfiguration = new FileSortingAppConfiguration()
             {
-                MaxLinesBeforeSort = 1500000, // 1500000 * 1024B *2  = 3 GB * 4 workers = 8 GB of memory * 3.5 OrderBy mesh at one time = 28 GB of memory
+                MaxLinesBeforeSort = 1500000, // 1500000 * 1024B  *2  = 3 GB * 4 workers = 8 GB of memory * 3.5 OrderBy mesh at one time = 28 GB of memory
                 SortedFilePrefix = "sorted_file_",
                 TempFolderPath = _tempPath,
                 StartMergeFileCount = 5
